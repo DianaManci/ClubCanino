@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand primary (natural green) -->
+    <color name="green_primary">#FF2F6F4E</color>
+    <color name="green_primary_dark">#FF1B4332</color>
+    <color name="green_primary_light">#FF52B788</color>
+    <color name="green_container">#FFD8F3DC</color>
+    <color name="green_on_container">#FF1B4332</color>
+
+    <!-- Warm accent (CTAs and highlights) -->
+    <color name="accent_warm">#FFE07A3D</color>
+    <color name="accent_warm_dark">#FFC45F24</color>
+    <color name="accent_warm_container">#FFFCE8D5</color>
+    <color name="accent_on_container">#FF7A3E12</color>
+
+    <!-- Backgrounds and surfaces -->
+    <color name="cream_background">#FFFBF7F0</color>
+    <color name="cream_surface">#FFFFFFFF</color>
+    <color name="cream_surface_variant">#FFF3EEE4</color>
+
+    <!-- Text -->
+    <color name="text_primary">#FF1C1917</color>
+    <color name="text_secondary">#FF78716C</color>
+    <color name="text_on_primary">#FFFFFFFF</color>
+    <color name="text_on_accent">#FFFFFFFF</color>
+    <color name="text_disabled">#FFA8A29E</color>
+    <color name="text_hint">#FFA8A29E</color>
+
+    <!-- Semantic states -->
+    <color name="success">#FF2D6A4F</color>
+    <color name="success_container">#FFD1FAE5</color>
+    <color name="warning">#FFD97706</color>
+    <color name="warning_container">#FFFEF3C7</color>
+    <color name="error">#FFC0392B</color>
+    <color name="error_container">#FFFEE2E2</color>
+    <color name="error_on_container">#FF7F1D1D</color>
+
+    <!-- Borders and dividers -->
+    <color name="outline">#FFD6D0C4</color>
+    <color name="divider">#FFEBE6DC</color>
+    <color name="scrim">#99000000</color>
+
+    <!-- Component states -->
+    <color name="button_primary_pressed">#FF265A40</color>
+    <color name="button_primary_disabled">#FFB7C9BE</color>
+    <color name="button_secondary_pressed">#FFE8DFD2</color>
+    <color name="input_stroke">#FFD6D0C4</color>
+    <color name="input_stroke_focused">#FF2F6F4E</color>
+    <color name="input_stroke_error">#FFC0392B</color>
+    <color name="ripple_primary">#332F6F4E</color>
+    <color name="ripple_accent">#33E07A3D</color>
+
+    <!-- Utilities -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+</resources>

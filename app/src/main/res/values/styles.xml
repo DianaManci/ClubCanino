@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Style family roots (required by Android dotted style names) -->
+    <style name="TextAppearance.ClubCanino" parent="TextAppearance.Material3.BodyLarge" />
+    <style name="Widget.ClubCanino" parent="@android:style/Widget" />
+    <style name="Widget.ClubCanino.Button" parent="Widget.Material3.Button" />
+    <style name="Widget.ClubCanino.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/cream_surface</item>
+        <item name="cardCornerRadius">@dimen/radius_lg</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="contentPadding">@dimen/card_padding</item>
+        <item name="strokeColor">@color/outline</item>
+        <item name="strokeWidth">@dimen/card_stroke_width</item>
+    </style>
+
+    <!-- Typography -->
+    <style name="TextAppearance.ClubCanino.Display" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textSize">@dimen/text_display</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <style name="TextAppearance.ClubCanino.Headline" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">@dimen/text_headline</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.ClubCanino.Title" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.ClubCanino.Subtitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">@dimen/text_subtitle</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="TextAppearance.ClubCanino.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="TextAppearance.ClubCanino.Body.Secondary" parent="TextAppearance.ClubCanino.Body">
+        <item name="android:textSize">@dimen/text_body_small</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.ClubCanino.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.ClubCanino.Label" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">@dimen/text_label</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.ClubCanino.Button" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">@dimen/text_button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <!-- Buttons -->
+    <style name="Widget.ClubCanino.Button.Primary" parent="Widget.ClubCanino.Button">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:paddingStart">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/button_padding_horizontal</item>
+        <item name="android:textAppearance">@style/TextAppearance.ClubCanino.Button</item>
+        <item name="android:textColor">@color/text_on_primary</item>
+        <item name="backgroundTint">@color/selector_button_primary</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="rippleColor">@color/ripple_primary</item>
+        <item name="elevation">@dimen/elevation_sm</item>
+    </style>
+
+    <style name="Widget.ClubCanino.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:paddingStart">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/button_padding_horizontal</item>
+        <item name="android:textAppearance">@style/TextAppearance.ClubCanino.Button</item>
+        <item name="android:textColor">@color/green_primary</item>
+        <item name="strokeColor">@color/green_primary</item>
+        <item name="strokeWidth">@dimen/button_stroke_width</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="rippleColor">@color/ripple_primary</item>
+    </style>
+
+    <style name="Widget.ClubCanino.Button.Accent" parent="Widget.ClubCanino.Button">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:paddingStart">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/button_padding_horizontal</item>
+        <item name="android:textAppearance">@style/TextAppearance.ClubCanino.Button</item>
+        <item name="android:textColor">@color/text_on_accent</item>
+        <item name="backgroundTint">@color/selector_button_accent</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="rippleColor">@color/ripple_accent</item>
+        <item name="elevation">@dimen/elevation_sm</item>
+    </style>
+
+    <style name="Widget.ClubCanino.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">@dimen/button_height_small</item>
+        <item name="android:textAppearance">@style/TextAppearance.ClubCanino.Button</item>
+        <item name="android:textColor">@color/green_primary</item>
+        <item name="rippleColor">@color/ripple_primary</item>
+    </style>
+
+    <!-- Text inputs -->
+    <style name="Widget.ClubCanino.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/selector_input_stroke</item>
+        <item name="boxStrokeWidth">@dimen/input_stroke_width</item>
+        <item name="boxStrokeWidthFocused">@dimen/input_stroke_width_focused</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_md</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_md</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_md</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_md</item>
+        <item name="hintTextColor">@color/green_primary</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+        <item name="boxBackgroundColor">@color/cream_surface</item>
+    </style>
+
+    <style name="Widget.ClubCanino.EditText" parent="Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="android:minHeight">@dimen/input_height</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+        <item name="android:paddingStart">@dimen/input_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/input_padding_horizontal</item>
+    </style>
+
+    <!-- Cards -->
+    <style name="Widget.ClubCanino.Card.Outlined" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/cream_surface</item>
+        <item name="cardCornerRadius">@dimen/radius_lg</item>
+        <item name="cardElevation">@dimen/elevation_none</item>
+        <item name="contentPadding">@dimen/card_padding</item>
+        <item name="strokeColor">@color/outline</item>
+        <item name="strokeWidth">@dimen/card_stroke_width</item>
+    </style>
+
+    <!-- Divider -->
+    <style name="Widget.ClubCanino.Divider" parent="Widget.ClubCanino">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/divider_height</item>
+        <item name="android:background">@color/divider</item>
+    </style>
+
+</resources>

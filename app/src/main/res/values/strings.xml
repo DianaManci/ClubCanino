@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Club Canino</string>
+    <string name="app_tagline">Todo para tu mascota en un solo lugar</string>
+
+    <!-- Shared actions (for upcoming screens) -->
+    <string name="action_continue">Continuar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_back">Volver</string>
+    <string name="action_confirm">Confirmar</string>
+    <string name="action_search">Buscar</string>
+    <string name="action_add">Agregar</string>
+    <string name="action_close">Cerrar</string>
+
+    <!-- Shared field hints -->
+    <string name="hint_email">Correo electrónico</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="hint_name">Nombre</string>
+    <string name="hint_phone">Teléfono</string>
+
+    <!-- Roles -->
+    <string name="role_buyer">Comprador</string>
+    <string name="role_seller">Vendedor</string>
+    <string name="role_admin">Administrador</string>
+
+    <!-- Generic messages -->
+    <string name="msg_loading">Cargando…</string>
+    <string name="msg_empty_state">No hay información para mostrar</string>
+    <string name="msg_error_generic">Ocurrió un error. Inténtalo de nuevo.</string>
+</resources>

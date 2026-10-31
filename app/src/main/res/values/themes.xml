@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Base.Theme.ClubCanino" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/green_primary</item>
+        <item name="colorOnPrimary">@color/text_on_primary</item>
+        <item name="colorPrimaryContainer">@color/green_container</item>
+        <item name="colorOnPrimaryContainer">@color/green_on_container</item>
+
+        <item name="colorSecondary">@color/accent_warm</item>
+        <item name="colorOnSecondary">@color/text_on_accent</item>
+        <item name="colorSecondaryContainer">@color/accent_warm_container</item>
+        <item name="colorOnSecondaryContainer">@color/accent_on_container</item>
+
+        <item name="colorTertiary">@color/green_primary_light</item>
+        <item name="colorOnTertiary">@color/text_on_primary</item>
+
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorErrorContainer">@color/error_container</item>
+        <item name="colorOnErrorContainer">@color/error_on_container</item>
+
+        <item name="android:colorBackground">@color/cream_background</item>
+        <item name="colorSurface">@color/cream_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/cream_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorOutlineVariant">@color/divider</item>
+
+        <item name="android:statusBarColor">@color/cream_background</item>
+        <item name="android:navigationBarColor">@color/cream_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/cream_background</item>
+
+        <item name="materialButtonStyle">@style/Widget.ClubCanino.Button.Primary</item>
+        <item name="materialCardViewStyle">@style/Widget.ClubCanino.Card</item>
+        <item name="textInputStyle">@style/Widget.ClubCanino.TextInputLayout</item>
+        <item name="editTextStyle">@style/Widget.ClubCanino.EditText</item>
+    </style>
+
+    <style name="Theme.ClubCanino" parent="Base.Theme.ClubCanino" />
+</resources>
