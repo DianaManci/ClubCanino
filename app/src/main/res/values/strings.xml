@@ -3,7 +3,7 @@
     <string name="app_name">Club Canino</string>
     <string name="app_tagline">Todo para tu mascota en un solo lugar</string>
 
-    <!-- Shared actions (for upcoming screens) -->
+    <!-- Shared actions -->
     <string name="action_continue">Continuar</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_save">Guardar</string>
@@ -19,6 +19,8 @@
     <string name="hint_email">Correo electrónico</string>
     <string name="hint_password">Contraseña</string>
     <string name="hint_name">Nombre</string>
+    <string name="hint_full_name">Nombre completo</string>
+    <string name="hint_confirm_password">Confirmar contraseña</string>
     <string name="hint_phone">Teléfono</string>
 
     <!-- Roles -->
@@ -30,4 +32,67 @@
     <string name="msg_loading">Cargando…</string>
     <string name="msg_empty_state">No hay información para mostrar</string>
     <string name="msg_error_generic">Ocurrió un error. Inténtalo de nuevo.</string>
+
+    <!-- Splash -->
+    <string name="splash_welcome">Bienvenido a Club Canino</string>
+    <string name="splash_subtitle">Productos y servicios para tu mejor amigo</string>
+    <string name="cd_app_logo">Logo de Club Canino</string>
+
+    <!-- Login -->
+    <string name="login_title">Iniciar sesión</string>
+    <string name="login_subtitle">Accede a tu cuenta para continuar</string>
+    <string name="action_login">Iniciar sesión</string>
+    <string name="action_go_register">¿No tienes cuenta? Regístrate</string>
+    <string name="action_forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="action_biometric_access">Acceder con huella</string>
+    <string name="cd_toggle_password">Mostrar u ocultar contraseña</string>
+
+    <!-- Register -->
+    <string name="register_title">Crear cuenta</string>
+    <string name="register_subtitle">Únete a Club Canino</string>
+    <string name="action_register">Registrarme</string>
+    <string name="action_go_login">¿Ya tienes cuenta? Inicia sesión</string>
+
+    <!-- Password recovery -->
+    <string name="recovery_title">Recuperar contraseña</string>
+    <string name="recovery_subtitle">Ingresa tu correo y te indicaremos los siguientes pasos</string>
+    <string name="action_send_recovery">Solicitar recuperación</string>
+
+    <!-- Biometric -->
+    <string name="biometric_title">Acceso con huella</string>
+    <string name="biometric_subtitle">Usa tu huella digital para acceder de forma rápida y segura</string>
+    <string name="action_use_fingerprint">Usar huella</string>
+    <string name="biometric_prompt_title">Autenticación biométrica</string>
+    <string name="biometric_prompt_subtitle">Confirma tu identidad con la huella</string>
+    <string name="biometric_prompt_negative">Usar contraseña</string>
+
+    <!-- Validation -->
+    <string name="error_field_required">Este campo es obligatorio</string>
+    <string name="error_email_invalid">Ingresa un correo electrónico válido</string>
+    <string name="error_password_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="error_password_mismatch">Las contraseñas no coinciden</string>
+
+    <!-- Pending integration messages -->
+    <string name="msg_login_pending">
+        Los datos del formulario son válidos, pero la autenticación real aún no está integrada.
+        El acceso con credenciales se conectará en una etapa posterior.
+    </string>
+    <string name="msg_register_pending">
+        Los datos del formulario son válidos, pero el registro real aún no está disponible.
+        La creación de cuentas se conectará cuando exista backend o base de datos.
+    </string>
+    <string name="msg_recovery_pending">
+        El correo tiene un formato válido, pero el envío de recuperación aún no está disponible.
+        Este servicio se habilitará cuando se integre el backend de correo.
+    </string>
+    <string name="msg_biometric_success_local">
+        La huella se verificó correctamente en este dispositivo.
+        El inicio de sesión de la aplicación seguirá pendiente hasta integrar la autenticación real.
+    </string>
+    <string name="msg_biometric_unavailable">
+        Este dispositivo no admite autenticación biométrica o no hay huellas configuradas.
+    </string>
+    <string name="msg_biometric_error">No se pudo completar la autenticación biométrica.</string>
+    <string name="msg_biometric_cancelled">Autenticación biométrica cancelada.</string>
+    <string name="msg_biometric_ready">Toca el botón para iniciar la verificación con huella.</string>
 </resources>

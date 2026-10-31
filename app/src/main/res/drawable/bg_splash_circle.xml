@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/green_container" />
+    <size
+        android:width="@dimen/splash_logo_size"
+        android:height="@dimen/splash_logo_size" />
+</shape>

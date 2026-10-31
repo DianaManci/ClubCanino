@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/biometricRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_screen"
+    android:paddingStart="@dimen/screen_padding_horizontal"
+    android:paddingTop="@dimen/spacing_xxl"
+    android:paddingEnd="@dimen/screen_padding_horizontal"
+    android:paddingBottom="@dimen/spacing_xxl"
+    tools:context=".auth.BiometricAuthActivity">
+
+    <ImageView
+        android:id="@+id/imageFingerprint"
+        android:layout_width="@dimen/biometric_icon_size"
+        android:layout_height="@dimen/biometric_icon_size"
+        android:background="@drawable/bg_splash_circle"
+        android:contentDescription="@string/biometric_title"
+        android:padding="@dimen/spacing_xl"
+        android:src="@drawable/ic_fingerprint"
+        app:layout_constraintBottom_toTopOf="@id/textTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:gravity="center"
+        android:text="@string/biometric_title"
+        android:textAppearance="@style/TextAppearance.ClubCanino.Headline"
+        app:layout_constraintBottom_toTopOf="@id/textSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageFingerprint" />
+
+    <TextView
+        android:id="@+id/textSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:gravity="center"
+        android:text="@string/biometric_subtitle"
+        android:textAppearance="@style/TextAppearance.ClubCanino.Body.Secondary"
+        app:layout_constraintBottom_toTopOf="@id/textStatus"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textTitle" />
+
+    <TextView
+        android:id="@+id/textStatus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:background="@drawable/bg_surface_rounded"
+        android:gravity="center"
+        android:padding="@dimen/spacing_lg"
+        android:text="@string/msg_biometric_ready"
+        android:textAppearance="@style/TextAppearance.ClubCanino.Body.Secondary"
+        app:layout_constraintBottom_toTopOf="@id/buttonAuthenticate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textSubtitle"
+        app:layout_constraintWidth_max="@dimen/content_max_width" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonAuthenticate"
+        style="@style/Widget.ClubCanino.Button.Primary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:text="@string/action_use_fingerprint"
+        app:layout_constraintBottom_toTopOf="@id/buttonBackToLogin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textStatus"
+        app:layout_constraintWidth_max="@dimen/content_max_width" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonBackToLogin"
+        style="@style/Widget.ClubCanino.Button.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:text="@string/action_back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttonAuthenticate" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
