@@ -50,6 +50,8 @@
     <dimen name="auth_logo_size">72dp</dimen>
     <dimen name="biometric_icon_size">96dp</dimen>
     <dimen name="product_image_height">160dp</dimen>
+    <dimen name="product_image_thumb">88dp</dimen>
+    <dimen name="product_image_detail">180dp</dimen>
     <dimen name="avatar_size">72dp</dimen>
 
     <!-- Dividers and elevation -->

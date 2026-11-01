@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.clubcanino.app.R
+import com.clubcanino.app.buyer.data.BuyerSession
+import com.clubcanino.app.navigation.RoleSelectionActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -77,7 +79,10 @@ class LoginActivity : AppCompatActivity() {
 
         if (!isValid) return
 
-        Toast.makeText(this, R.string.msg_login_pending, Toast.LENGTH_LONG).show()
+        // Demo flow: no real authentication yet. Keep local buyer id for pet storage.
+        BuyerSession.setBuyerEmail(this, email)
+        Toast.makeText(this, R.string.msg_login_pending, Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, RoleSelectionActivity::class.java))
     }
 
     private fun clearErrors() {

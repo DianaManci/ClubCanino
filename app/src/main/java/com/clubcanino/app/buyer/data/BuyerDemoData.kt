@@ -1,0 +1,247 @@
+package com.clubcanino.app.buyer.data
+
+import android.content.Context
+import com.clubcanino.app.R
+
+object BuyerDemoData {
+
+    val categories = listOf(
+        "Todos",
+        "Perros",
+        "Gatos",
+        "Alimentos",
+        "Accesorios",
+        "Salud",
+        "Promociones"
+    )
+
+    private var appContext: Context? = null
+    private var loadedBuyerId: String? = null
+    private val petsInternal = mutableListOf<Pet>()
+
+    fun profile(context: Context): BuyerProfile {
+        return BuyerProfile(
+            fullName = "Ana Gómez",
+            email = BuyerSession.currentBuyerId(context),
+            phone = "+57 300 555 1212",
+            city = "Bogotá"
+        )
+    }
+
+    /**
+     * Loads pets for the active buyer from local storage.
+     * Seeds Luna and Michi only when that buyer has no saved list yet.
+     */
+    fun ensurePetsLoaded(context: Context) {
+        val app = context.applicationContext
+        appContext = app
+        val buyerId = BuyerSession.currentBuyerId(app)
+        if (loadedBuyerId == buyerId) return
+
+        loadedBuyerId = buyerId
+        petsInternal.clear()
+
+        val store = PetLocalStore(app)
+        if (store.hasSavedPets(buyerId)) {
+            petsInternal.addAll(store.load(buyerId))
+        } else {
+            petsInternal.addAll(defaultSeedPets())
+            store.save(buyerId, petsInternal.toList())
+        }
+    }
+
+    fun pets(): List<Pet> = petsInternal.toList()
+
+    fun petById(id: String): Pet? = petsInternal.find { it.id == id }
+
+    fun addPet(name: String, species: String, breed: String, ageLabel: String): Pet {
+        val pet = Pet(
+            id = "pet_${System.currentTimeMillis()}",
+            name = name,
+            species = species,
+            breed = breed,
+            ageLabel = ageLabel
+        )
+        petsInternal.add(pet)
+        persistPets()
+        return pet
+    }
+
+    fun updatePet(
+        id: String,
+        name: String,
+        species: String,
+        breed: String,
+        ageLabel: String
+    ): Boolean {
+        val index = petsInternal.indexOfFirst { it.id == id }
+        if (index < 0) return false
+        petsInternal[index] = Pet(
+            id = id,
+            name = name,
+            species = species,
+            breed = breed,
+            ageLabel = ageLabel
+        )
+        persistPets()
+        return true
+    }
+
+    fun removePet(id: String): Boolean {
+        val removed = petsInternal.removeAll { it.id == id }
+        if (removed) persistPets()
+        return removed
+    }
+
+    private fun persistPets() {
+        val context = appContext ?: return
+        val buyerId = loadedBuyerId ?: BuyerSession.currentBuyerId(context)
+        PetLocalStore(context).save(buyerId, petsInternal.toList())
+    }
+
+    private fun defaultSeedPets(): List<Pet> = listOf(
+        Pet("pet1", "Luna", "Perro", "Labrador", "3 años"),
+        Pet("pet2", "Michi", "Gato", "Mestizo", "2 años")
+    )
+
+    val orders = listOf(
+        OrderSummary("ORD-1042", "28 oct 2026", "Entregado", 129900.0, 3),
+        OrderSummary("ORD-1038", "12 oct 2026", "En camino", 45900.0, 1),
+        OrderSummary("ORD-1021", "30 sep 2026", "Entregado", 88900.0, 2)
+    )
+
+    val products = listOf(
+        Product(
+            id = "p1",
+            name = "Croquetas Premium Adulto",
+            description = "Alimento completo para perros adultos con proteína de pollo y omega 3.",
+            price = 89900.0,
+            category = "Alimentos",
+            petType = "Perros",
+            featured = true,
+            onPromotion = true,
+            imageColorRes = R.color.green_container,
+            imageIconRes = R.drawable.ic_pet_dog
+        ),
+        Product(
+            id = "p2",
+            name = "Arena aglomerante",
+            description = "Arena sanitaria de control de olores, ideal para gatos exigentes.",
+            price = 32900.0,
+            category = "Accesorios",
+            petType = "Gatos",
+            featured = true,
+            imageColorRes = R.color.accent_warm_container,
+            imageIconRes = R.drawable.ic_pet_cat
+        ),
+        Product(
+            id = "p3",
+            name = "Juguete mordedor resistente",
+            description = "Caucho natural para morder y reducir el estrés dental.",
+            price = 24900.0,
+            category = "Accesorios",
+            petType = "Perros",
+            featured = true,
+            imageColorRes = R.color.cream_surface_variant,
+            imageIconRes = R.drawable.ic_pet_dog
+        ),
+        Product(
+            id = "p4",
+            name = "Antipulgas spot-on",
+            description = "Tratamiento mensual para perros medianos. Consulta veterinaria recomendada.",
+            price = 55900.0,
+            category = "Salud",
+            petType = "Perros",
+            onPromotion = true,
+            imageColorRes = R.color.success_container,
+            imageIconRes = R.drawable.ic_pet_dog
+        ),
+        Product(
+            id = "p5",
+            name = "Snacks dentales felinos",
+            description = "Premios crujientes que ayudan a limpiar el sarro de tu gato.",
+            price = 18900.0,
+            category = "Alimentos",
+            petType = "Gatos",
+            featured = true,
+            imageColorRes = R.color.warning_container,
+            imageIconRes = R.drawable.ic_pet_cat
+        ),
+        Product(
+            id = "p6",
+            name = "Collar reflectivo ajustable",
+            description = "Collar ligero con hebilla de seguridad y costuras reforzadas.",
+            price = 27900.0,
+            category = "Accesorios",
+            petType = "Perros",
+            imageColorRes = R.color.green_container,
+            imageIconRes = R.drawable.ic_pet_dog
+        ),
+        Product(
+            id = "p7",
+            name = "Rascador vertical",
+            description = "Torre compacta con sisal natural para uñas y descanso.",
+            price = 119900.0,
+            category = "Accesorios",
+            petType = "Gatos",
+            featured = true,
+            imageColorRes = R.color.accent_warm_container,
+            imageIconRes = R.drawable.ic_pet_cat
+        ),
+        Product(
+            id = "p8",
+            name = "Shampoo hipoalergénico",
+            description = "Fórmula suave sin fragancias agresivas para piel sensible.",
+            price = 34900.0,
+            category = "Salud",
+            petType = "Perros",
+            onPromotion = true,
+            imageColorRes = R.color.cream_surface_variant,
+            imageIconRes = R.drawable.ic_pet_dog
+        ),
+        Product(
+            id = "p9",
+            name = "Transportín ligero",
+            description = "Ideal para visitas al veterinario. Ventilación lateral y correa segura.",
+            price = 149900.0,
+            category = "Accesorios",
+            petType = "Gatos",
+            imageColorRes = R.color.success_container,
+            imageIconRes = R.drawable.ic_pet_cat
+        ),
+        Product(
+            id = "p10",
+            name = "Kit cepillo + peine",
+            description = "Set de aseo para reducir nudos y pelo suelto en casa.",
+            price = 39900.0,
+            category = "Accesorios",
+            petType = "Perros",
+            featured = true,
+            imageColorRes = R.color.warning_container,
+            imageIconRes = R.drawable.ic_pet_dog
+        )
+    )
+
+    fun productById(id: String): Product? = products.find { it.id == id }
+
+    fun featured(): List<Product> = products.filter { it.featured }
+
+    fun promotions(): List<Product> = products.filter { it.onPromotion }
+
+    fun filter(category: String, query: String): List<Product> {
+        val q = query.trim().lowercase()
+        return products.filter { product ->
+            val matchesCategory = when (category) {
+                "Todos", "" -> true
+                "Promociones" -> product.onPromotion
+                "Perros", "Gatos" -> product.petType.equals(category, ignoreCase = true)
+                else -> product.category.equals(category, ignoreCase = true)
+            }
+            val matchesQuery = q.isEmpty() ||
+                product.name.lowercase().contains(q) ||
+                product.description.lowercase().contains(q) ||
+                product.category.lowercase().contains(q)
+            matchesCategory && matchesQuery
+        }
+    }
+}

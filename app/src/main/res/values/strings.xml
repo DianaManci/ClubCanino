@@ -95,4 +95,100 @@
     <string name="msg_biometric_error">No se pudo completar la autenticación biométrica.</string>
     <string name="msg_biometric_cancelled">Autenticación biométrica cancelada.</string>
     <string name="msg_biometric_ready">Toca el botón para iniciar la verificación con huella.</string>
+
+    <!-- Role selection (demo navigation) -->
+    <string name="role_selection_title">Elige un rol</string>
+    <string name="role_selection_subtitle">Explora la navegación de cada tipo de usuario</string>
+    <string name="role_selection_demo_notice">
+        Demostración: aún no hay autenticación real. Selecciona un rol para abrir su panel de navegación.
+    </string>
+    <string name="msg_role_screen_placeholder">
+        Pantalla base lista para la siguiente etapa. Aquí se implementará la funcionalidad real del módulo.
+    </string>
+
+    <!-- Bottom navigation labels -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_catalog">Catálogo</string>
+    <string name="nav_cart">Carrito</string>
+    <string name="nav_profile">Perfil</string>
+    <string name="nav_dashboard">Panel</string>
+    <string name="nav_products">Productos</string>
+    <string name="nav_orders">Pedidos</string>
+    <string name="nav_users">Usuarios</string>
+    <string name="nav_sales">Ventas</string>
+
+    <!-- Buyer placeholders -->
+    <string name="buyer_home_title">Inicio comprador</string>
+    <string name="buyer_home_subtitle">Resumen y novedades para tu mascota</string>
+    <string name="buyer_catalog_title">Catálogo</string>
+    <string name="buyer_catalog_subtitle">Productos y servicios disponibles</string>
+    <string name="buyer_cart_title">Carrito</string>
+    <string name="buyer_cart_subtitle">Revisa tus productos antes de pagar</string>
+    <string name="buyer_profile_title">Perfil comprador</string>
+    <string name="buyer_profile_subtitle">Datos de tu cuenta de comprador</string>
+
+    <!-- Seller placeholders -->
+    <string name="seller_dashboard_title">Panel vendedor</string>
+    <string name="seller_dashboard_subtitle">Resumen de tu tienda</string>
+    <string name="seller_products_title">Mis productos</string>
+    <string name="seller_products_subtitle">Administra el catálogo que ofreces</string>
+    <string name="seller_orders_title">Pedidos recibidos</string>
+    <string name="seller_orders_subtitle">Historial de pedidos de tus clientes</string>
+    <string name="seller_profile_title">Perfil vendedor</string>
+    <string name="seller_profile_subtitle">Datos de tu cuenta de vendedor</string>
+
+    <!-- Admin placeholders -->
+    <string name="admin_dashboard_title">Dashboard</string>
+    <string name="admin_dashboard_subtitle">Vista general de Club Canino</string>
+    <string name="admin_users_title">Gestión de usuarios</string>
+    <string name="admin_users_subtitle">Administra compradores y vendedores</string>
+    <string name="admin_products_title">Gestión de productos</string>
+    <string name="admin_products_subtitle">Supervisa el catálogo global</string>
+    <string name="admin_sales_title">Informe de ventas</string>
+    <string name="admin_sales_subtitle">Consulta el rendimiento de ventas</string>
+
+    <!-- Buyer module -->
+    <string name="buyer_welcome">Hola, Ana</string>
+    <string name="buyer_welcome_subtitle">Encuentra lo mejor para tu mascota hoy</string>
+    <string name="hint_search_products">Buscar productos</string>
+    <string name="buyer_promo_title">Promoción de la semana</string>
+    <string name="buyer_promo_subtitle">Hasta 20% en alimentos y cuidado esencial</string>
+    <string name="action_see_promos">Ver promociones</string>
+    <string name="buyer_categories_title">Categorías</string>
+    <string name="buyer_featured_title">Productos destacados</string>
+    <string name="cd_product_image">Imagen del producto</string>
+    <string name="label_quantity">Cantidad</string>
+    <string name="action_add_to_cart">Agregar al carrito</string>
+    <string name="action_remove_from_cart">Eliminar</string>
+    <string name="action_continue_purchase">Continuar con la compra</string>
+    <string name="msg_added_to_cart">Producto agregado al carrito</string>
+    <string name="msg_product_not_found">Producto no encontrado</string>
+    <string name="buyer_cart_empty">Tu carrito está vacío. Agrega productos desde el catálogo.</string>
+    <string name="cart_unit_price">Unitario: %1$s</string>
+    <string name="cart_subtotal">Subtotal: %1$s</string>
+    <string name="cart_total">Total: %1$s</string>
+    <string name="msg_checkout_demo">
+        La compra de demostración está lista en el carrito. El pago real se integrará en una etapa posterior.
+    </string>
+    <string name="buyer_pets_title">Mis mascotas</string>
+    <string name="buyer_orders_title">Historial de pedidos</string>
+    <string name="action_add_pet">Agregar mascota</string>
+    <string name="action_edit_pet">Editar mascota</string>
+    <string name="hint_pet_name">Nombre</string>
+    <string name="hint_pet_species">Especie (perro/gato)</string>
+    <string name="hint_pet_breed">Raza</string>
+    <string name="hint_pet_age">Edad</string>
+    <string name="pet_details_format">%1$s · %2$s · %3$s</string>
+    <string name="order_meta_format">%1$s · %2$s · %3$d ítems</string>
+    <string name="buyer_pets_empty">Aún no tienes mascotas registradas.</string>
+    <string name="msg_pet_added">Mascota registrada</string>
+    <string name="msg_pet_updated">Mascota actualizada</string>
+    <string name="msg_pet_deleted">Mascota eliminada</string>
+    <string name="dialog_delete_pet_title">Eliminar mascota</string>
+    <string name="dialog_delete_pet_message">¿Seguro que deseas eliminar a %1$s? Esta acción no se puede deshacer en esta sesión.</string>
+    <string name="pet_breed_default">Sin raza</string>
+    <string name="pet_age_default">Edad no indicada</string>
+    <string name="cd_navigate_back">Regresar</string>
 </resources>
+
+

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.clubcanino.app.R
+import com.clubcanino.app.buyer.data.BuyerSession
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -93,6 +94,8 @@ class RegisterActivity : AppCompatActivity() {
 
         if (!isValid) return
 
+        // Local-only: associate future buyer pet data with this demo account email.
+        BuyerSession.setBuyerEmail(this, email)
         Toast.makeText(this, R.string.msg_register_pending, Toast.LENGTH_LONG).show()
     }
 

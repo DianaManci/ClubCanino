@@ -44,6 +44,27 @@
             android:exported="false" />
 
         <activity
+            android:name=".navigation.RoleSelectionActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".buyer.BuyerMainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".buyer.ui.ProductDetailActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".seller.SellerMainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.AdminMainActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

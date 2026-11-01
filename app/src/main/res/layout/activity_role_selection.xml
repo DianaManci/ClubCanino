@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/roleSelectionScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_screen"
+    android:fillViewport="true"
+    tools:context=".navigation.RoleSelectionActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/roleSelectionRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/screen_padding_horizontal"
+        android:paddingTop="@dimen/spacing_xxl"
+        android:paddingEnd="@dimen/screen_padding_horizontal"
+        android:paddingBottom="@dimen/spacing_xxl">
+
+        <ImageView
+            android:id="@+id/imageLogo"
+            android:layout_width="@dimen/auth_logo_size"
+            android:layout_height="@dimen/auth_logo_size"
+            android:background="@drawable/bg_splash_circle"
+            android:contentDescription="@string/cd_app_logo"
+            android:padding="@dimen/spacing_lg"
+            android:src="@drawable/ic_paw"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:gravity="center"
+            android:text="@string/role_selection_title"
+            android:textAppearance="@style/TextAppearance.ClubCanino.Headline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageLogo" />
+
+        <TextView
+            android:id="@+id/textSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:gravity="center"
+            android:text="@string/role_selection_subtitle"
+            android:textAppearance="@style/TextAppearance.ClubCanino.Body.Secondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textTitle" />
+
+        <TextView
+            android:id="@+id/textDemoNotice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@drawable/bg_surface_rounded"
+            android:gravity="center"
+            android:padding="@dimen/spacing_lg"
+            android:text="@string/role_selection_demo_notice"
+            android:textAppearance="@style/TextAppearance.ClubCanino.Caption"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textSubtitle"
+            app:layout_constraintWidth_max="@dimen/content_max_width" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonBuyer"
+            style="@style/Widget.ClubCanino.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:text="@string/role_buyer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textDemoNotice"
+            app:layout_constraintWidth_max="@dimen/content_max_width" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSeller"
+            style="@style/Widget.ClubCanino.Button.Secondary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:text="@string/role_seller"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buttonBuyer"
+            app:layout_constraintWidth_max="@dimen/content_max_width" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonAdmin"
+            style="@style/Widget.ClubCanino.Button.Accent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:text="@string/role_admin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buttonSeller"
+            app:layout_constraintWidth_max="@dimen/content_max_width" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonBackToLogin"
+            style="@style/Widget.ClubCanino.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:text="@string/action_go_login"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buttonAdmin" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

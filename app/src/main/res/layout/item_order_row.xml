@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.ClubCanino.Card.Outlined"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_sm">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textOrderId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.ClubCanino.Label"
+            tools:text="ORD-1042" />
+
+        <TextView
+            android:id="@+id/textOrderMeta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textAppearance="@style/TextAppearance.ClubCanino.Caption"
+            tools:text="28 oct · Entregado · 3 ítems" />
+
+        <TextView
+            android:id="@+id/textOrderTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:textAppearance="@style/TextAppearance.ClubCanino.Body"
+            android:textColor="@color/green_primary"
+            tools:text="$ 129.900" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
