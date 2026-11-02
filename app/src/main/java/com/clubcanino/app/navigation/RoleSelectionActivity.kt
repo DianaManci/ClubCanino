@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.clubcanino.app.R
+import com.clubcanino.app.admin.data.ShopUserStore
+import com.clubcanino.app.buyer.data.BuyerSession
 import com.clubcanino.app.common.UserRole
 import com.google.android.material.button.MaterialButton
 
@@ -27,21 +29,29 @@ class RoleSelectionActivity : AppCompatActivity() {
             insets
         }
 
-        findViewById<MaterialButton>(R.id.buttonBuyer).setOnClickListener {
-            openRole(UserRole.BUYER)
+        val sessionRole = BuyerSession.currentRole(this)
+        if (sessionRole == null) {
+            finish()
+            return
         }
-        findViewById<MaterialButton>(R.id.buttonSeller).setOnClickListener {
-            openRole(UserRole.SELLER)
-        }
-        findViewById<MaterialButton>(R.id.buttonAdmin).setOnClickListener {
-            openRole(UserRole.ADMIN)
-        }
+        val buttonBuyer = findViewById<MaterialButton>(R.id.buttonBuyer)
+        val buttonSeller = findViewById<MaterialButton>(R.id.buttonSeller)
+        val buttonAdmin = findViewById<MaterialButton>(R.id.buttonAdmin)
+        buttonBuyer.isEnabled = sessionRole == ShopUserStore.ROLE_BUYER
+        buttonSeller.isEnabled = sessionRole == ShopUserStore.ROLE_SELLER
+        buttonAdmin.isEnabled = sessionRole == ShopUserStore.ROLE_ADMIN
+        buttonBuyer.setOnClickListener { openRole(UserRole.BUYER) }
+        buttonSeller.setOnClickListener { openRole(UserRole.SELLER) }
+        buttonAdmin.setOnClickListener { openRole(UserRole.ADMIN) }
         findViewById<MaterialButton>(R.id.buttonBackToLogin).setOnClickListener {
+            BuyerSession.clear(this)
             finish()
         }
     }
 
     private fun openRole(role: UserRole) {
+        val sessionRole = BuyerSession.currentRole(this) ?: return
+        if (RoleNavigator.roleOf(sessionRole) != role) return
         RoleNavigator.openRoleHome(this, role)
     }
 }

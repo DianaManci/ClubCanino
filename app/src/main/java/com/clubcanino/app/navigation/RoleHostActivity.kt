@@ -8,6 +8,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
+import com.clubcanino.app.admin.data.ShopUserStore
+import com.clubcanino.app.seller.data.ShopCatalog
+import com.clubcanino.app.seller.data.ShopOrders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 /**
@@ -24,6 +27,9 @@ abstract class RoleHostActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ShopOrders.bind(this)
+        ShopCatalog.bind(this)
+        ShopUserStore.bind(this)
         enableEdgeToEdge()
         setContentView(R.layout.activity_role_host)
 
@@ -43,10 +49,18 @@ abstract class RoleHostActivity : AppCompatActivity() {
             true
         }
 
+        onHostConfigured()
+
         if (savedInstanceState == null) {
             bottomNavigation.selectedItemId = defaultSelectedItemId()
         }
     }
+
+    /**
+     * Visual setup that must run after the host layout exists and before the
+     * first screen is created.
+     */
+    protected open fun onHostConfigured() {}
 
     protected fun showFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()

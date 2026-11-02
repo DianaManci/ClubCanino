@@ -71,6 +71,7 @@
     <string name="error_email_invalid">Ingresa un correo electrónico válido</string>
     <string name="error_password_short">La contraseña debe tener al menos 6 caracteres</string>
     <string name="error_password_mismatch">Las contraseñas no coinciden</string>
+    <string name="error_login_invalid">Correo o contraseña incorrectos</string>
 
     <!-- Pending integration messages -->
     <string name="msg_login_pending">
@@ -129,7 +130,7 @@
 
     <!-- Seller placeholders -->
     <string name="seller_dashboard_title">Panel vendedor</string>
-    <string name="seller_dashboard_subtitle">Resumen de tu tienda</string>
+    <string name="seller_dashboard_subtitle">Gestiona tu tienda de forma fácil y rápida</string>
     <string name="seller_products_title">Mis productos</string>
     <string name="seller_products_subtitle">Administra el catálogo que ofreces</string>
     <string name="seller_orders_title">Pedidos recibidos</string>
@@ -139,7 +140,7 @@
 
     <!-- Admin placeholders -->
     <string name="admin_dashboard_title">Dashboard</string>
-    <string name="admin_dashboard_subtitle">Vista general de Club Canino</string>
+    <string name="admin_dashboard_subtitle">Estado actual de la tienda</string>
     <string name="admin_users_title">Gestión de usuarios</string>
     <string name="admin_users_subtitle">Administra compradores y vendedores</string>
     <string name="admin_products_title">Gestión de productos</string>
@@ -151,11 +152,28 @@
     <string name="buyer_welcome">Hola, Ana</string>
     <string name="buyer_welcome_subtitle">Encuentra lo mejor para tu mascota hoy</string>
     <string name="hint_search_products">Buscar productos</string>
-    <string name="buyer_promo_title">Promoción de la semana</string>
-    <string name="buyer_promo_subtitle">Hasta 20% en alimentos y cuidado esencial</string>
-    <string name="action_see_promos">Ver promociones</string>
+    <string name="buyer_promo_title">Promociones especiales</string>
+    <string name="buyer_promo_subtitle">Hasta 30% de descuento</string>
+    <string name="action_see_promos">Ver ofertas →</string>
     <string name="buyer_categories_title">Categorías</string>
     <string name="buyer_featured_title">Productos destacados</string>
+    <string name="buyer_brand_tagline">Cuida · Ama · Comparte</string>
+    <string name="buyer_hero_title">Tu tienda de\nmascotas de confianza</string>
+    <string name="buyer_hero_subtitle">Productos y amor para tu mejor amigo</string>
+    <string name="action_buy_now">Comprar ahora →</string>
+    <string name="action_see_all">Ver todos</string>
+    <string name="buyer_quick_catalog">Catálogo</string>
+    <string name="buyer_quick_promos">Promociones</string>
+    <string name="buyer_quick_pets">Mis Mascotas</string>
+    <string name="buyer_quick_profile">Mi Perfil</string>
+    <string name="badge_offer">Oferta</string>
+    <string name="badge_new">Nuevo</string>
+    <string name="cd_open_cart">Abrir carrito</string>
+    <string name="cd_add_to_cart">Agregar al carrito</string>
+    <string name="cd_hero_banner">Perro y gato de Club Canino</string>
+    <string name="cd_promo_banner">Gato en la sección de promociones</string>
+    <string name="buyer_cart_headline">Tu carrito</string>
+    <string name="buyer_catalog_headline">Catálogo</string>
     <string name="cd_product_image">Imagen del producto</string>
     <string name="label_quantity">Cantidad</string>
     <string name="action_add_to_cart">Agregar al carrito</string>
@@ -163,6 +181,10 @@
     <string name="action_continue_purchase">Continuar con la compra</string>
     <string name="msg_added_to_cart">Producto agregado al carrito</string>
     <string name="msg_product_not_found">Producto no encontrado</string>
+    <string name="product_available">Disponible</string>
+    <string name="product_unavailable">Agotado</string>
+    <string name="product_card_meta">%1$s · %2$s</string>
+    <string name="product_card_meta_unavailable">%1$s · %2$s · Agotado</string>
     <string name="buyer_cart_empty">Tu carrito está vacío. Agrega productos desde el catálogo.</string>
     <string name="cart_unit_price">Unitario: %1$s</string>
     <string name="cart_subtotal">Subtotal: %1$s</string>
@@ -170,6 +192,24 @@
     <string name="msg_checkout_demo">
         La compra de demostración está lista en el carrito. El pago real se integrará en una etapa posterior.
     </string>
+    <string name="payment_title">Pago simulado</string>
+    <string name="payment_subtitle">Revisa el pedido y elige un método de demostración. No se piden datos bancarios ni se cobra dinero real.</string>
+    <string name="payment_header_subtitle">Pago de demostración</string>
+    <string name="payment_summary_title">Resumen de la compra</string>
+    <string name="payment_method_title">Método de pago</string>
+    <string name="payment_method_cash">Efectivo contra entrega</string>
+    <string name="payment_method_card">Tarjeta de demostración</string>
+    <string name="payment_method_transfer">Transferencia simulada</string>
+    <string name="payment_method_required">Elige un método de pago para continuar.</string>
+    <string name="payment_line_meta">%1$d × %2$s · %3$s</string>
+    <string name="action_confirm_purchase">Confirmar compra</string>
+    <string name="payment_success_title">Compra registrada</string>
+    <string name="payment_success_body">El pedido %1$s quedó en estado %2$s. Ya puede consultarlo el vendedor y aparece en el informe del administrador.</string>
+    <string name="payment_buyer_line">Comprador: %1$s</string>
+    <string name="payment_date_line">Fecha: %1$s</string>
+    <string name="payment_status_line">Estado: %1$s</string>
+    <string name="payment_method_line">Método: %1$s</string>
+    <string name="action_back_to_store">Volver a la tienda</string>
     <string name="buyer_pets_title">Mis mascotas</string>
     <string name="buyer_orders_title">Historial de pedidos</string>
     <string name="action_add_pet">Agregar mascota</string>
@@ -189,6 +229,102 @@
     <string name="pet_breed_default">Sin raza</string>
     <string name="pet_age_default">Edad no indicada</string>
     <string name="cd_navigate_back">Regresar</string>
+
+    <!-- Shared shop demo -->
+    <string name="shop_product_active">Activo</string>
+    <string name="shop_product_inactive">Inactivo</string>
+    <string name="shop_product_meta">%1$s · %2$s · Stock %3$d · %4$s</string>
+    <string name="shop_product_detail">%1$s · %2$s\nPrecio: %3$s\nStock: %4$d\nEstado: %5$s\n\n%6$s</string>
+    <string name="seller_store_line">Tienda: %1$s</string>
+    <string name="shop_product_no_description">Sin descripción</string>
+    <string name="action_view">Consultar</string>
+    <string name="action_view_order">Ver pedido</string>
+    <string name="hint_product_name">Nombre del producto</string>
+    <string name="hint_product_description">Descripción</string>
+    <string name="hint_product_price">Precio</string>
+    <string name="hint_product_category">Categoría (Alimentos, Accesorios o Salud)</string>
+    <string name="hint_product_pet_type">Tipo de mascota (Perros o Gatos)</string>
+    <string name="hint_product_stock">Stock</string>
+    <string name="label_product_active">Producto activo en la tienda</string>
+    <string name="error_price_invalid">Ingresa un precio válido</string>
+    <string name="error_price_positive">El precio debe ser mayor que cero</string>
+    <string name="error_stock_invalid">Ingresa un stock válido (0 o más)</string>
+    <string name="error_category_invalid">Usa Alimentos, Accesorios o Salud</string>
+    <string name="error_pet_type_invalid">Usa Perros o Gatos</string>
+    <string name="dialog_add_product">Agregar producto</string>
+    <string name="dialog_edit_product">Editar producto</string>
+    <string name="dialog_delete_product_title">Eliminar producto</string>
+    <string name="dialog_delete_product_message">¿Seguro que deseas eliminar %1$s? El catálogo del comprador no cambia.</string>
+    <string name="msg_product_added">Producto agregado</string>
+    <string name="msg_product_updated">Producto actualizado</string>
+    <string name="msg_product_deleted">Producto eliminado</string>
+    <string name="msg_products_empty">No hay productos para esta búsqueda.</string>
+    <string name="shop_order_meta">%1$s · %2$s · %3$s · %4$d ítems</string>
+    <string name="shop_order_line">%1$s × %2$d · %3$s</string>
+    <string name="action_advance_status">Marcar como %1$s</string>
+    <string name="action_cancel_order">Cancelar pedido</string>
+    <string name="dialog_cancel_order_title">Cancelar pedido</string>
+    <string name="dialog_cancel_order_message">¿Seguro que deseas cancelar %1$s? Pasará al historial.</string>
+    <string name="msg_order_updated">Estado del pedido actualizado</string>
+    <string name="msg_order_cancelled">Pedido cancelado</string>
+    <string name="msg_orders_active_empty">No hay pedidos por gestionar.</string>
+    <string name="msg_orders_history_empty">El historial está vacío.</string>
+    <string name="seller_orders_active_title">Por gestionar</string>
+    <string name="seller_orders_history_title">Historial</string>
+
+    <!-- Seller module -->
+    <string name="seller_dashboard_hello">¡Hola, %1$s!</string>
+    <string name="seller_stat_products">Productos activos</string>
+    <string name="seller_stat_orders">Pedidos por gestionar</string>
+    <string name="seller_stat_sales">Ventas entregadas</string>
+    <string name="seller_stat_low_stock">Stock bajo</string>
+    <string name="action_open_products">Ir a productos</string>
+    <string name="action_open_orders">Ir a pedidos</string>
+    <string name="hint_store_name">Nombre de la tienda</string>
+    <string name="hint_city">Ciudad</string>
+    <string name="dialog_edit_seller_profile">Editar perfil</string>
+    <string name="msg_seller_profile_updated">Perfil actualizado</string>
+    <string name="seller_profile_demo_notice">Estos datos viven solo en esta sesión de demostración.</string>
+
+    <!-- Admin module -->
+    <string name="admin_dashboard_welcome">Resumen General</string>
+    <string name="admin_stat_users">Usuarios</string>
+    <string name="admin_stat_products">Productos activos</string>
+    <string name="admin_stat_orders">Pedidos abiertos</string>
+    <string name="admin_stat_sales">Ventas entregadas</string>
+    <string name="admin_recent_orders">Últimos pedidos</string>
+    <string name="seller_header_subtitle">Tienda y Ventas</string>
+    <string name="admin_header_subtitle">Panel Administrativo</string>
+    <string name="action_return_home">Inicio</string>
+    <string name="cd_return_roles">Volver a elegir rol</string>
+    <string name="seller_quick_access">Accesos rápidos</string>
+    <string name="seller_banner_message">¡Tu tienda, siempre en buenas manos!</string>
+    <string name="admin_banner_title">Club Canino</string>
+    <string name="admin_banner_subtitle">Crece contigo</string>
+    <string name="cd_seller_banner">Perro de la tienda</string>
+    <string name="cd_admin_banner">Gato de Club Canino</string>
+    <string name="admin_products_shared_notice">Este catálogo es el mismo que administra el vendedor.</string>
+    <string name="admin_sales_intro">El reporte usa los mismos pedidos del vendedor. Un cambio de estado se refleja aquí.</string>
+    <string name="admin_stat_order_count">Pedidos en el filtro</string>
+    <string name="admin_stat_delivered">Ingresos entregados</string>
+    <string name="admin_stat_pending">Pendientes</string>
+    <string name="admin_stat_cancelled">Cancelados</string>
+    <string name="msg_sales_empty">No hay pedidos con este estado.</string>
+    <string name="hint_user_role">Rol (Comprador, Vendedor o Administrador)</string>
+    <string name="dialog_add_user">Agregar usuario</string>
+    <string name="dialog_edit_user">Editar usuario</string>
+    <string name="dialog_delete_user_title">Eliminar usuario</string>
+    <string name="dialog_delete_user_message">¿Seguro que deseas eliminar a %1$s?</string>
+    <string name="error_role_invalid">Usa Comprador, Vendedor o Administrador</string>
+    <string name="msg_user_added">Usuario agregado</string>
+    <string name="msg_user_updated">Usuario actualizado</string>
+    <string name="msg_user_deleted">Usuario eliminado</string>
+    <string name="msg_user_duplicate_email">Ese correo ya está registrado</string>
+    <string name="msg_user_last_admin">Debe quedar al menos un administrador</string>
+    <string name="msg_users_empty">No hay usuarios registrados.</string>
+    <string name="user_meta">%1$s · %2$s</string>
+    <string name="action_open_sales">Ir a ventas</string>
+    <string name="action_open_users">Ir a usuarios</string>
 </resources>
 
 

@@ -2,30 +2,67 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Widget.ClubCanino.Card.Outlined"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_md">
+    android:layout_marginBottom="@dimen/spacing_md"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="2dp"
+    app:contentPadding="12dp"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.ClubCanino.Label"
-            tools:text="Producto" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textUnitPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:textAppearance="@style/TextAppearance.ClubCanino.Caption"
-            tools:text="Unitario" />
+            <FrameLayout
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_buyer_image_round"
+                android:clipToOutline="true">
+
+                <ImageView
+                    android:id="@+id/imageProduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/cd_product_image"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/img_product_food" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/buyer_text"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="Producto" />
+
+                <TextView
+                    android:id="@+id/textUnitPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/buyer_text_muted"
+                    android:textSize="12sp"
+                    tools:text="Unitario" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,19 +76,27 @@
                 style="@style/Widget.ClubCanino.Button.Secondary"
                 android:layout_width="@dimen/button_height_small"
                 android:layout_height="@dimen/button_height_small"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 android:minWidth="0dp"
                 android:padding="0dp"
                 android:text="-"
-                android:textSize="@dimen/text_title" />
+                android:textColor="@color/buyer_forest"
+                android:textSize="@dimen/text_title"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="12dp"
+                app:strokeColor="@color/buyer_forest" />
 
             <TextView
                 android:id="@+id/textQuantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/spacing_md"
-                android:minWidth="@dimen/icon_size_lg"
                 android:gravity="center"
-                android:textAppearance="@style/TextAppearance.ClubCanino.Title"
+                android:minWidth="@dimen/icon_size_lg"
+                android:textColor="@color/buyer_text"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 tools:text="1" />
 
             <com.google.android.material.button.MaterialButton
@@ -59,10 +104,16 @@
                 style="@style/Widget.ClubCanino.Button.Secondary"
                 android:layout_width="@dimen/button_height_small"
                 android:layout_height="@dimen/button_height_small"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 android:minWidth="0dp"
                 android:padding="0dp"
                 android:text="+"
-                android:textSize="@dimen/text_title" />
+                android:textColor="@color/buyer_forest"
+                android:textSize="@dimen/text_title"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="12dp"
+                app:strokeColor="@color/buyer_forest" />
 
             <TextView
                 android:id="@+id/textLineTotal"
@@ -71,8 +122,9 @@
                 android:layout_marginStart="@dimen/spacing_md"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:textAppearance="@style/TextAppearance.ClubCanino.Label"
-                android:textColor="@color/green_primary"
+                android:textColor="@color/buyer_forest"
+                android:textSize="15sp"
+                android:textStyle="bold"
                 tools:text="$ 0" />
         </LinearLayout>
 
@@ -82,6 +134,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:text="@string/action_remove_from_cart" />
+            android:text="@string/action_remove_from_cart"
+            android:textAllCaps="false"
+            android:textColor="@color/error" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

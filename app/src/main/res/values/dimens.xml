@@ -75,4 +75,11 @@
     <!-- Navigation -->
     <dimen name="bottom_nav_height">64dp</dimen>
     <dimen name="toolbar_height">56dp</dimen>
+
+    <dimen name="buyer_featured_card_width">172dp</dimen>
+    <dimen name="buyer_hero_height">200dp</dimen>
+    <dimen name="buyer_promo_height">168dp</dimen>
+    <dimen name="buyer_product_image">128dp</dimen>
+    <dimen name="buyer_detail_image">248dp</dimen>
+    <dimen name="buyer_chip_stroke">1dp</dimen>
 </resources>

@@ -7,7 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.clubcanino.app.R
+import com.clubcanino.app.admin.data.ShopUserStore
+import com.clubcanino.app.admin.data.ShopUserWrite
 import com.clubcanino.app.buyer.data.BuyerSession
+import com.clubcanino.app.common.UserRole
+import com.clubcanino.app.navigation.RoleNavigator
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -94,9 +98,20 @@ class RegisterActivity : AppCompatActivity() {
 
         if (!isValid) return
 
-        // Local-only: associate future buyer pet data with this demo account email.
-        BuyerSession.setBuyerEmail(this, email)
-        Toast.makeText(this, R.string.msg_register_pending, Toast.LENGTH_LONG).show()
+        ShopUserStore.bind(this)
+        when (ShopUserStore.register(name, email, password)) {
+            ShopUserWrite.SAVED -> {
+                BuyerSession.start(this, email, ShopUserStore.ROLE_BUYER)
+                RoleNavigator.openRoleHome(this, UserRole.BUYER)
+                finish()
+            }
+            ShopUserWrite.DUPLICATE_EMAIL -> {
+                inputLayoutEmail.error = getString(R.string.msg_user_duplicate_email)
+            }
+            else -> {
+                Toast.makeText(this, R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun clearErrors() {

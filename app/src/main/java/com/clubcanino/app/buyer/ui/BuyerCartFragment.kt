@@ -1,9 +1,11 @@
 package com.clubcanino.app.buyer.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -22,6 +24,8 @@ class BuyerCartFragment : Fragment() {
     private lateinit var textSubtotal: TextView
     private lateinit var textTotal: TextView
     private lateinit var buttonCheckout: MaterialButton
+    private lateinit var emptyGroup: View
+    private var headerBinder: BuyerHeaderBinder? = null
 
     private val cartListener: () -> Unit = { renderCart() }
 
@@ -40,23 +44,27 @@ class BuyerCartFragment : Fragment() {
         textSubtotal = view.findViewById(R.id.textSubtotal)
         textTotal = view.findViewById(R.id.textTotal)
         buttonCheckout = view.findViewById(R.id.buttonCheckout)
+        emptyGroup = view.findViewById(R.id.emptyCartGroup)
+        headerBinder = BuyerHeaderBinder(this, view).also { it.bind() }
 
         buttonCheckout.setOnClickListener {
             if (CartStore.items().isEmpty()) {
                 Toast.makeText(requireContext(), R.string.buyer_cart_empty, Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), R.string.msg_checkout_demo, Toast.LENGTH_LONG).show()
+                startActivity(Intent(requireContext(), PaymentActivity::class.java))
             }
         }
     }
 
     override fun onStart() {
         super.onStart()
+        headerBinder?.start()
         CartStore.addListener(cartListener)
         renderCart()
     }
 
     override fun onStop() {
+        headerBinder?.stop()
         CartStore.removeListener(cartListener)
         super.onStop()
     }
@@ -65,6 +73,7 @@ class BuyerCartFragment : Fragment() {
         val items = CartStore.items()
         containerItems.removeAllViews()
         val empty = items.isEmpty()
+        emptyGroup.visibility = if (empty) View.VISIBLE else View.GONE
         textEmpty.visibility = if (empty) View.VISIBLE else View.GONE
         scrollCart.visibility = if (empty) View.GONE else View.VISIBLE
         cardTotals.visibility = if (empty) View.GONE else View.VISIBLE
@@ -73,6 +82,9 @@ class BuyerCartFragment : Fragment() {
         val inflater = layoutInflater
         items.forEach { item ->
             val row = inflater.inflate(R.layout.item_cart_line, containerItems, false)
+            val image = row.findViewById<ImageView>(R.id.imageProduct)
+            (image.parent as View).clipToOutline = true
+            image.setImageResource(BuyerVisuals.photoRes(item.product))
             row.findViewById<TextView>(R.id.textName).text = item.product.name
             row.findViewById<TextView>(R.id.textUnitPrice).text =
                 getString(R.string.cart_unit_price, MoneyFormat.format(item.product.price))

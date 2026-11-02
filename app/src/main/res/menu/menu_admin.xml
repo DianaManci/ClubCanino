@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_admin_dashboard"
-        android:icon="@drawable/ic_nav_dashboard"
+        android:icon="@drawable/ic_nav_home"
         android:title="@string/nav_dashboard" />
     <item
         android:id="@+id/nav_admin_users"
@@ -10,10 +10,10 @@
         android:title="@string/nav_users" />
     <item
         android:id="@+id/nav_admin_products"
-        android:icon="@drawable/ic_nav_catalog"
+        android:icon="@drawable/ic_stat_box"
         android:title="@string/nav_products" />
     <item
         android:id="@+id/nav_admin_sales"
-        android:icon="@drawable/ic_nav_sales"
+        android:icon="@drawable/ic_stat_dollar"
         android:title="@string/nav_sales" />
 </menu>

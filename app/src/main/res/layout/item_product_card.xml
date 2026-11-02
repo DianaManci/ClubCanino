@@ -2,63 +2,112 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Widget.ClubCanino.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_md"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="3dp"
+    app:contentPadding="10dp"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <FrameLayout
-            android:id="@+id/imageContainer"
-            android:layout_width="@dimen/product_image_thumb"
-            android:layout_height="@dimen/product_image_thumb"
-            android:background="@drawable/bg_surface_rounded">
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/buyer_product_image">
 
-            <ImageView
-                android:id="@+id/imageProduct"
-                android:layout_width="@dimen/icon_size_xl"
-                android:layout_height="@dimen/icon_size_xl"
-                android:layout_gravity="center"
-                android:contentDescription="@string/cd_product_image"
-                tools:src="@drawable/ic_pet_dog" />
+            <FrameLayout
+                android:id="@+id/imageContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_buyer_image_round"
+                android:clipToOutline="true">
+
+                <ImageView
+                    android:id="@+id/imageProduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/cd_product_image"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/img_product_food" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/textBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|top"
+                android:layout_margin="8dp"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:background="@drawable/bg_buyer_badge_offer"
+                tools:text="Oferta"
+                tools:visibility="visible" />
         </FrameLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/textName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_md"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:minLines="2"
+            android:textColor="@color/buyer_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Croquetas Premium Adulto" />
 
-            <TextView
-                android:id="@+id/textName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.ClubCanino.Label"
-                tools:text="Producto" />
+        <TextView
+            android:id="@+id/textCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/buyer_text_muted"
+            android:textSize="11sp"
+            tools:text="Perros · Alimentos" />
 
-            <TextView
-                android:id="@+id/textCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xs"
-                android:textAppearance="@style/TextAppearance.ClubCanino.Caption"
-                tools:text="Perros · Alimentos" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/textPrice"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:textAppearance="@style/TextAppearance.ClubCanino.Subtitle"
-                android:textColor="@color/green_primary"
+                android:layout_weight="1"
+                android:textColor="@color/buyer_forest"
+                android:textSize="13sp"
+                android:textStyle="bold"
                 tools:text="$ 89.900" />
+
+            <ImageButton
+                android:id="@+id/buttonAddToCart"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:background="@drawable/bg_buyer_circle_green"
+                android:contentDescription="@string/cd_add_to_cart"
+                android:padding="7dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_nav_cart"
+                android:tint="@color/white" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

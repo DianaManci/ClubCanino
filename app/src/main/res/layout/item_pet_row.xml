@@ -1,30 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Widget.ClubCanino.Card.Outlined"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_sm">
+    android:layout_marginBottom="@dimen/spacing_sm"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="2dp"
+    app:contentPadding="14dp"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textPetName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.ClubCanino.Label"
-            tools:text="Luna" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textPetDetails"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:textAppearance="@style/TextAppearance.ClubCanino.Caption"
-            tools:text="Perro · Labrador · 3 años" />
+            <FrameLayout
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_buyer_avatar">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_paw"
+                    android:tint="@color/buyer_forest" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textPetName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/buyer_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Luna" />
+
+                <TextView
+                    android:id="@+id/textPetDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/buyer_text_muted"
+                    android:textSize="13sp"
+                    tools:text="Perro · Labrador · 3 años" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,7 +77,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/button_height_small"
-                android:text="@string/action_edit" />
+                android:text="@string/action_edit"
+                android:textAllCaps="false"
+                android:textColor="@color/buyer_forest" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonDeletePet"
@@ -48,6 +88,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/button_height_small"
                 android:text="@string/action_delete"
+                android:textAllCaps="false"
                 android:textColor="@color/error" />
         </LinearLayout>
     </LinearLayout>

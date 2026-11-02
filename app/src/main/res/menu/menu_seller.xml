@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_seller_dashboard"
-        android:icon="@drawable/ic_nav_dashboard"
+        android:icon="@drawable/ic_nav_home"
         android:title="@string/nav_dashboard" />
     <item
         android:id="@+id/nav_seller_products"
-        android:icon="@drawable/ic_nav_catalog"
+        android:icon="@drawable/ic_stat_box"
         android:title="@string/nav_products" />
     <item
         android:id="@+id/nav_seller_orders"
-        android:icon="@drawable/ic_nav_orders"
+        android:icon="@drawable/ic_stat_clipboard"
         android:title="@string/nav_orders" />
     <item
         android:id="@+id/nav_seller_profile"

@@ -1,77 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_screen"
-    android:orientation="vertical"
-    android:paddingStart="@dimen/screen_padding_horizontal"
-    android:paddingTop="@dimen/spacing_lg"
-    android:paddingEnd="@dimen/screen_padding_horizontal"
-    android:paddingBottom="@dimen/spacing_lg">
+    android:background="@color/buyer_cream"
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/buyer_cart_title"
-        android:textAppearance="@style/TextAppearance.ClubCanino.Headline" />
+    <include layout="@layout/include_buyer_header" />
 
-    <TextView
-        android:id="@+id/textEmptyCart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_xl"
-        android:gravity="center"
-        android:text="@string/buyer_cart_empty"
-        android:textAppearance="@style/TextAppearance.ClubCanino.Body.Secondary"
-        android:visibility="gone" />
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollCart"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/spacing_md"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/screen_padding_horizontal"
+        android:paddingTop="@dimen/spacing_lg"
+        android:paddingEnd="@dimen/screen_padding_horizontal"
+        android:paddingBottom="@dimen/spacing_lg">
 
-        <LinearLayout
-            android:id="@+id/containerCartItems"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </androidx.core.widget.NestedScrollView>
+            android:text="@string/buyer_cart_headline"
+            android:textColor="@color/buyer_text"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardTotals"
-        style="@style/Widget.ClubCanino.Card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_md">
-
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="2dp"
+            android:text="@string/buyer_cart_subtitle"
+            android:textColor="@color/buyer_text_muted"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:id="@+id/emptyCartGroup"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imageEmptyCart"
+                android:layout_width="220dp"
+                android:layout_height="140dp"
+                android:contentDescription="@string/cd_promo_banner"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_buyer_promo" />
 
             <TextView
-                android:id="@+id/textSubtotal"
+                android:id="@+id/textEmptyCart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.ClubCanino.Body" />
-
-            <TextView
-                android:id="@+id/textTotal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xs"
-                android:textAppearance="@style/TextAppearance.ClubCanino.Title"
-                android:textColor="@color/green_primary" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonCheckout"
-                style="@style/Widget.ClubCanino.Button.Accent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_md"
-                android:text="@string/action_continue_purchase" />
+                android:layout_marginTop="@dimen/spacing_lg"
+                android:gravity="center"
+                android:text="@string/buyer_cart_empty"
+                android:textColor="@color/buyer_text_muted"
+                android:textSize="15sp" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollCart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:layout_weight="1"
+            android:clipToPadding="false">
+
+            <LinearLayout
+                android:id="@+id/containerCartItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="4dp"
+                android:paddingBottom="@dimen/spacing_sm" />
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardTotals"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="3dp"
+            app:contentPadding="16dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textSubtotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/buyer_text_muted"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/textTotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:textColor="@color/buyer_forest"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonCheckout"
+                    style="@style/Widget.ClubCanino.Button.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_md"
+                    android:text="@string/action_continue_purchase"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/buyer_forest"
+                    app:cornerRadius="24dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 </LinearLayout>

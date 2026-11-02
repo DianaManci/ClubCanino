@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
 import com.clubcanino.app.buyer.data.BuyerDemoData
@@ -20,6 +21,7 @@ class BuyerProfileFragment : Fragment() {
 
     private lateinit var petsContainer: LinearLayout
     private lateinit var ordersContainer: LinearLayout
+    private var headerBinder: BuyerHeaderBinder? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +31,7 @@ class BuyerProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        headerBinder = BuyerHeaderBinder(this, view).also { it.bind() }
         BuyerDemoData.ensurePetsLoaded(requireContext())
 
         val profile = BuyerDemoData.profile(requireContext())
@@ -48,6 +51,16 @@ class BuyerProfileFragment : Fragment() {
         renderOrders()
     }
 
+    override fun onStart() {
+        super.onStart()
+        headerBinder?.start()
+    }
+
+    override fun onStop() {
+        headerBinder?.stop()
+        super.onStop()
+    }
+
     private fun renderPets() {
         petsContainer.removeAllViews()
         val inflater = layoutInflater
@@ -56,6 +69,7 @@ class BuyerProfileFragment : Fragment() {
             val empty = TextView(requireContext()).apply {
                 text = getString(R.string.buyer_pets_empty)
                 setTextAppearance(R.style.TextAppearance_ClubCanino_Body_Secondary)
+                setTextColor(ContextCompat.getColor(context, R.color.buyer_text_muted))
             }
             petsContainer.addView(empty)
             return

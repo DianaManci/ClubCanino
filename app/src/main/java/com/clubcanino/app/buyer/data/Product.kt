@@ -10,5 +10,7 @@ data class Product(
     val featured: Boolean = false,
     val onPromotion: Boolean = false,
     val imageColorRes: Int,
-    val imageIconRes: Int
+    val imageIconRes: Int,
+    val stock: Int = 1,
+    val available: Boolean = true
 )

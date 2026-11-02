@@ -54,4 +54,26 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
+
+    <!-- Buyer screens, matched to the reference mock -->
+    <color name="buyer_forest">#FF1F6B3A</color>
+    <color name="buyer_forest_dark">#FF164E2C</color>
+    <color name="buyer_forest_soft">#FFE5F6EA</color>
+    <color name="buyer_cream">#FFF8F1DE</color>
+    <color name="buyer_text">#FF1C2B22</color>
+    <color name="buyer_text_muted">#FF6E7568</color>
+    <color name="buyer_outline">#FFE6D8BE</color>
+    <color name="buyer_badge_offer">#FFE53935</color>
+    <color name="buyer_badge_new">#FF2E9B57</color>
+    <color name="buyer_quick_catalog">#FFE5F6EA</color>
+    <color name="buyer_quick_promo">#FFFFF4D8</color>
+    <color name="buyer_quick_pets">#FFE7F6EC</color>
+    <color name="buyer_quick_profile">#FFE8F3EA</color>
+    <color name="buyer_nav_indicator">#33FFFFFF</color>
+    <color name="buyer_panel">#F2FFFFFF</color>
+
+    <color name="status_delivered_text">#FF1F6B3A</color>
+    <color name="status_shipping_text">#FF1565C0</color>
+    <color name="status_preparing_text">#FFA15C00</color>
+    <color name="status_cancelled_text">#FFC0392B</color>
 </resources>

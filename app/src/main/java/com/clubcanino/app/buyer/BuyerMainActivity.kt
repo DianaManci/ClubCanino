@@ -8,6 +8,7 @@ import com.clubcanino.app.buyer.ui.BuyerCartFragment
 import com.clubcanino.app.buyer.ui.BuyerCatalogFragment
 import com.clubcanino.app.buyer.ui.BuyerHomeFragment
 import com.clubcanino.app.buyer.ui.BuyerProfileFragment
+import com.clubcanino.app.navigation.RoleChrome
 import com.clubcanino.app.navigation.RoleHostActivity
 
 class BuyerMainActivity : RoleHostActivity() {
@@ -22,6 +23,7 @@ class BuyerMainActivity : RoleHostActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         BuyerDemoData.ensurePetsLoaded(this)
+        RoleChrome.apply(this)
         // Reselecting Home always restores the buyer start screen.
         bottomNavigation().setOnItemReselectedListener { item ->
             if (item.itemId == R.id.nav_buyer_home) {
@@ -60,5 +62,13 @@ class BuyerMainActivity : RoleHostActivity() {
         } else {
             nav.selectedItemId = R.id.nav_buyer_catalog
         }
+    }
+
+    fun openCart() {
+        bottomNavigation().selectedItemId = R.id.nav_buyer_cart
+    }
+
+    fun openProfile() {
+        bottomNavigation().selectedItemId = R.id.nav_buyer_profile
     }
 }
