@@ -9,6 +9,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
 import com.clubcanino.app.admin.data.ShopUserStore
+import com.clubcanino.app.buyer.data.BuyerSession
+import com.clubcanino.app.buyer.data.CartStore
 import com.clubcanino.app.seller.data.ShopCatalog
 import com.clubcanino.app.seller.data.ShopOrders
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -25,11 +27,19 @@ abstract class RoleHostActivity : AppCompatActivity() {
 
     protected abstract fun defaultSelectedItemId(): Int
 
+    /** Role stored on the account. The screen is not shown for any other role. */
+    protected abstract fun requiredRole(): String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!sessionMatchesRole()) {
+            finish()
+            return
+        }
         ShopOrders.bind(this)
         ShopCatalog.bind(this)
         ShopUserStore.bind(this)
+        CartStore.bind(this)
         enableEdgeToEdge()
         setContentView(R.layout.activity_role_host)
 
@@ -54,6 +64,16 @@ abstract class RoleHostActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             bottomNavigation.selectedItemId = defaultSelectedItemId()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!sessionMatchesRole()) finish()
+    }
+
+    private fun sessionMatchesRole(): Boolean {
+        val role = BuyerSession.currentRole(this) ?: return false
+        return role.equals(requiredRole(), ignoreCase = true)
     }
 
     /**

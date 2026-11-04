@@ -27,16 +27,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/admin_sales_title"
                 android:textColor="@color/buyer_text"
-                android:textSize="24sp"
+                android:textSize="@dimen/text_headline"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/spacing_xs"
                 android:text="@string/admin_sales_subtitle"
                 android:textColor="@color/buyer_text_muted"
-                android:textSize="14sp" />
+                android:textSize="@dimen/text_body_small" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -44,7 +44,7 @@
                 android:layout_marginTop="@dimen/spacing_md"
                 android:text="@string/admin_sales_intro"
                 android:textColor="@color/buyer_text_muted"
-                android:textSize="12sp" />
+                android:textSize="@dimen/text_caption" />
 
             <LinearLayout
                 android:id="@+id/containerSalesStats"

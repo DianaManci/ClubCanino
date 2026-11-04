@@ -3,6 +3,7 @@ package com.clubcanino.app.buyer
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
+import com.clubcanino.app.admin.data.ShopUserStore
 import com.clubcanino.app.buyer.data.BuyerDemoData
 import com.clubcanino.app.buyer.ui.BuyerCartFragment
 import com.clubcanino.app.buyer.ui.BuyerCatalogFragment
@@ -20,8 +21,11 @@ class BuyerMainActivity : RoleHostActivity() {
 
     override fun defaultSelectedItemId(): Int = R.id.nav_buyer_home
 
+    override fun requiredRole(): String = ShopUserStore.ROLE_BUYER
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (isFinishing) return
         BuyerDemoData.ensurePetsLoaded(this)
         RoleChrome.apply(this)
         // Reselecting Home always restores the buyer start screen.

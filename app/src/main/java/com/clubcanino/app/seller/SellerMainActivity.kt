@@ -4,6 +4,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.clubcanino.app.R
+import com.clubcanino.app.admin.data.ShopUserStore
 import com.clubcanino.app.navigation.RoleChrome
 import com.clubcanino.app.navigation.RoleHostActivity
 import com.clubcanino.app.seller.ui.SellerDashboardFragment
@@ -16,6 +17,8 @@ class SellerMainActivity : RoleHostActivity() {
     override fun bottomMenuRes(): Int = R.menu.menu_seller
 
     override fun defaultSelectedItemId(): Int = R.id.nav_seller_dashboard
+
+    override fun requiredRole(): String = ShopUserStore.ROLE_SELLER
 
     override fun onHostConfigured() {
         RoleChrome.apply(this)

@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/buyer_hero_height"
                 app:cardBackgroundColor="@color/buyer_cream"
-                app:cardCornerRadius="24dp"
+                app:cardCornerRadius="@dimen/radius_xl"
                 app:cardElevation="4dp"
                 app:contentPadding="0dp"
                 app:strokeWidth="0dp">
@@ -73,33 +73,33 @@
                             android:layout_height="wrap_content"
                             android:text="@string/buyer_hero_title"
                             android:textColor="@color/buyer_text"
-                            android:textSize="22sp"
+                            android:textSize="@dimen/text_section"
                             android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="@dimen/spacing_xs"
                             android:text="@string/buyer_hero_subtitle"
                             android:textColor="@color/buyer_text_muted"
-                            android:textSize="13sp" />
+                            android:textSize="@dimen/text_small" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/buttonBuyNow"
                             style="@style/Widget.ClubCanino.Button.Primary"
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_marginTop="@dimen/spacing_md"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
                             android:minWidth="0dp"
                             android:minHeight="40dp"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="@dimen/spacing_lg"
+                            android:paddingEnd="@dimen/spacing_lg"
                             android:text="@string/action_buy_now"
                             android:textAllCaps="false"
                             android:textColor="@color/white"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/text_small"
                             app:backgroundTint="@color/buyer_forest"
                             app:cornerRadius="20dp" />
                     </LinearLayout>
@@ -157,7 +157,7 @@
                             android:maxLines="2"
                             android:text="@string/buyer_quick_catalog"
                             android:textColor="@color/buyer_text"
-                            android:textSize="11sp" />
+                            android:textSize="@dimen/text_tiny" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -205,7 +205,7 @@
                             android:maxLines="2"
                             android:text="@string/buyer_quick_promos"
                             android:textColor="@color/buyer_text"
-                            android:textSize="11sp" />
+                            android:textSize="@dimen/text_tiny" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -254,7 +254,7 @@
                             android:maxLines="2"
                             android:text="@string/buyer_quick_pets"
                             android:textColor="@color/buyer_text"
-                            android:textSize="11sp" />
+                            android:textSize="@dimen/text_tiny" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -302,7 +302,7 @@
                             android:maxLines="2"
                             android:text="@string/buyer_quick_profile"
                             android:textColor="@color/buyer_text"
-                            android:textSize="11sp" />
+                            android:textSize="@dimen/text_tiny" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
@@ -376,7 +376,7 @@
                     android:layout_marginStart="6dp"
                     android:text="@string/buyer_categories_title"
                     android:textColor="@color/buyer_text"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_subtitle"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -415,7 +415,7 @@
                     android:layout_weight="1"
                     android:text="@string/buyer_featured_title"
                     android:textColor="@color/buyer_text"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_subtitle"
                     android:textStyle="bold" />
 
                 <TextView
@@ -423,10 +423,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:padding="4dp"
+                    android:padding="@dimen/spacing_xs"
                     android:text="@string/action_see_all"
                     android:textColor="@color/buyer_forest"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_body_small"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -435,8 +435,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
                 android:clipToPadding="false"
-                android:paddingTop="4dp"
-                android:paddingBottom="8dp"
+                android:paddingTop="@dimen/spacing_xs"
+                android:paddingBottom="@dimen/spacing_sm"
                 android:scrollbars="none">
 
                 <LinearLayout
@@ -451,7 +451,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/buyer_promo_height"
                 android:layout_marginTop="@dimen/spacing_md"
-                app:cardCornerRadius="24dp"
+                app:cardCornerRadius="@dimen/radius_xl"
                 app:cardElevation="3dp"
                 app:contentPadding="0dp"
                 app:strokeWidth="0dp">
@@ -482,7 +482,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/buyer_promo_title"
                             android:textColor="@color/buyer_text"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_body"
                             android:textStyle="bold" />
 
                         <TextView
@@ -491,14 +491,14 @@
                             android:layout_marginTop="2dp"
                             android:text="@string/buyer_promo_subtitle"
                             android:textColor="@color/buyer_text_muted"
-                            android:textSize="13sp" />
+                            android:textSize="@dimen/text_small" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/buttonSeePromos"
                             style="@style/Widget.ClubCanino.Button.Text"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="@dimen/spacing_xs"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
                             android:minWidth="0dp"
@@ -514,7 +514,7 @@
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_gravity="end|bottom"
-                        android:layout_margin="12dp"
+                        android:layout_margin="@dimen/spacing_md"
                         android:alpha="0.85"
                         android:contentDescription="@null"
                         android:importantForAccessibility="no"

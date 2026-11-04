@@ -49,7 +49,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/buyer_text"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/text_medium"
                     android:textStyle="bold"
                     tools:text="#1006" />
 
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="@color/buyer_text_muted"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/text_caption"
                     tools:text="Ana Torres · 3 ítems" />
             </LinearLayout>
 
@@ -67,12 +67,12 @@
                 android:id="@+id/textOrderStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:paddingStart="8dp"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:paddingStart="@dimen/spacing_sm"
                 android:paddingTop="3dp"
-                android:paddingEnd="8dp"
+                android:paddingEnd="@dimen/spacing_sm"
                 android:paddingBottom="3dp"
-                android:textSize="11sp"
+                android:textSize="@dimen/text_tiny"
                 android:textStyle="bold"
                 tools:text="En camino" />
         </LinearLayout>
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/buyer_forest"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_body_small"
                 android:textStyle="bold"
                 tools:text="$ 129.900" />
 

@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/buyer_text"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_medium"
                 android:textStyle="bold"
                 tools:text="ORD-1042" />
 
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="@color/buyer_text_muted"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_caption"
                 tools:text="28 oct · Entregado · 3 ítems" />
         </LinearLayout>
 
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_sm"
             android:textColor="@color/buyer_forest"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_body_small"
             android:textStyle="bold"
             tools:text="$ 129.900" />
     </LinearLayout>

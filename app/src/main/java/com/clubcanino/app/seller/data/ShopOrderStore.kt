@@ -44,6 +44,7 @@ class ShopOrderStore(context: Context) {
                 JSONObject().apply {
                     put(JSON_ID, order.id)
                     put(JSON_BUYER, order.buyerName)
+                    put(JSON_EMAIL, order.buyerEmail)
                     put(JSON_DATE, order.dateLabel)
                     put(JSON_STATUS, order.status)
                     put(JSON_LINES, lines)
@@ -71,7 +72,8 @@ class ShopOrderStore(context: Context) {
                             buyerName = buyer,
                             dateLabel = obj.optString(JSON_DATE).ifBlank { "Fecha no indicada" },
                             status = obj.optString(JSON_STATUS).ifBlank { ShopOrderStatus.PENDING },
-                            lines = lines
+                            lines = lines,
+                            buyerEmail = obj.optString(JSON_EMAIL).trim().lowercase()
                         )
                     )
                 }
@@ -107,6 +109,7 @@ class ShopOrderStore(context: Context) {
         private const val KEY_ORDERS = "shop_orders"
         private const val JSON_ID = "id"
         private const val JSON_BUYER = "buyerName"
+        private const val JSON_EMAIL = "buyerEmail"
         private const val JSON_DATE = "dateLabel"
         private const val JSON_STATUS = "status"
         private const val JSON_LINES = "lines"

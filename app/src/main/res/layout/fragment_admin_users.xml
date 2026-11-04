@@ -28,16 +28,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/admin_users_title"
                 android:textColor="@color/buyer_text"
-                android:textSize="24sp"
+                android:textSize="@dimen/text_headline"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/spacing_xs"
                 android:text="@string/admin_users_subtitle"
                 android:textColor="@color/buyer_text_muted"
-                android:textSize="14sp" />
+                android:textSize="@dimen/text_body_small" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonAddUser"

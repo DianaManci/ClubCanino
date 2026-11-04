@@ -15,7 +15,8 @@ data class ShopOrder(
     val buyerName: String,
     val dateLabel: String,
     var status: String,
-    val lines: List<ShopOrderLine>
+    val lines: List<ShopOrderLine>,
+    val buyerEmail: String = ""
 ) {
     val itemCount: Int
         get() = lines.sumOf { it.quantity }

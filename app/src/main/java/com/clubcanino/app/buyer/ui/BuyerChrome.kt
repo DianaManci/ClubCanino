@@ -56,6 +56,7 @@ class BuyerHeaderBinder(
     }
 
     fun start() {
+        CartStore.bind(root.context)
         CartStore.addListener(listener)
         refreshBadge()
     }

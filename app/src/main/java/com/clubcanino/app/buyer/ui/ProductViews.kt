@@ -59,6 +59,7 @@ object ProductViews {
         addButton.alpha = if (product.available) 1f else 0.4f
         addButton.setOnClickListener {
             if (!product.available) return@setOnClickListener
+            CartStore.bind(view.context)
             CartStore.add(product, 1)
             Toast.makeText(view.context, R.string.msg_added_to_cart, Toast.LENGTH_SHORT).show()
         }

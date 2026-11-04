@@ -48,14 +48,15 @@ object BuyerSession {
             .apply()
     }
 
-    fun currentBuyerId(context: Context): String {
-        val stored = context.applicationContext
+    fun currentEmail(context: Context): String? {
+        return context.applicationContext
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getString(KEY_BUYER_EMAIL, null)
             ?.trim()
-            .orEmpty()
-        return if (stored.isEmpty()) DEMO_BUYER_EMAIL else stored
+            ?.takeIf { it.isNotEmpty() }
     }
+
+    fun currentBuyerId(context: Context): String = currentEmail(context) ?: DEMO_BUYER_EMAIL
 
     fun normalizeEmail(email: String): String = email.trim().lowercase()
 }

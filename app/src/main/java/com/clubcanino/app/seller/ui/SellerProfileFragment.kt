@@ -32,17 +32,23 @@ class SellerProfileFragment : Fragment() {
     }
 
     private fun bind(view: View) {
-        val profile = SellerProfileStore.get()
+        val profile = SellerProfileStore.current(requireContext())
         view.findViewById<TextView>(R.id.textSellerName).text = profile.fullName
         view.findViewById<TextView>(R.id.textStoreName).text =
             getString(R.string.seller_store_line, profile.storeName)
         view.findViewById<TextView>(R.id.textSellerEmail).text = profile.email
         view.findViewById<TextView>(R.id.textSellerPhone).text = profile.phone
-        view.findViewById<TextView>(R.id.textSellerCity).text = profile.city
+        val city = view.findViewById<TextView>(R.id.textSellerCity)
+        if (profile.city.isBlank()) {
+            city.visibility = View.GONE
+        } else {
+            city.visibility = View.VISIBLE
+            city.text = profile.city
+        }
     }
 
     private fun showEditDialog() {
-        val profile = SellerProfileStore.get()
+        val profile = SellerProfileStore.current(requireContext())
         val form = layoutInflater.inflate(R.layout.dialog_seller_profile, null, false)
         val layoutName = form.findViewById<TextInputLayout>(R.id.layoutSellerName)
         val layoutStore = form.findViewById<TextInputLayout>(R.id.layoutStoreName)
@@ -58,6 +64,7 @@ class SellerProfileFragment : Fragment() {
         editName.setText(profile.fullName)
         editStore.setText(profile.storeName)
         editEmail.setText(profile.email)
+        editEmail.isEnabled = false
         editPhone.setText(profile.phone)
         editCity.setText(profile.city)
 
@@ -109,6 +116,7 @@ class SellerProfileFragment : Fragment() {
                 if (!valid) return@setOnClickListener
 
                 SellerProfileStore.update(
+                    requireContext(),
                     SellerProfile(
                         fullName = name,
                         storeName = store,

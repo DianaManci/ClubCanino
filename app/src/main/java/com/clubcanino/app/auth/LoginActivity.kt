@@ -1,7 +1,9 @@
 package com.clubcanino.app.auth
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
+import android.widget.ScrollView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -25,17 +27,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.loginRoot)) { view, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(
-                view.paddingLeft + bars.left,
-                view.paddingTop + bars.top,
-                view.paddingRight + bars.right,
-                view.paddingBottom + bars.bottom
-            )
-            insets
-        }
+        keepFocusedFieldVisible(findViewById(R.id.loginScroll))
 
         inputLayoutEmail = findViewById(R.id.inputLayoutEmail)
         inputLayoutPassword = findViewById(R.id.inputLayoutPassword)
@@ -88,6 +80,23 @@ class LoginActivity : AppCompatActivity() {
 
         BuyerSession.start(this, account.email, account.role)
         RoleNavigator.openRoleHome(this, RoleNavigator.roleOf(account.role))
+    }
+
+    private fun keepFocusedFieldVisible(scroll: ScrollView) {
+        ViewCompat.setOnApplyWindowInsetsListener(scroll) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            view.setPadding(bars.left, bars.top, bars.right, maxOf(bars.bottom, ime.bottom))
+            if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
+                currentFocus?.let { focused ->
+                    view.post {
+                        val field = Rect(0, 0, focused.width, focused.height)
+                        scroll.requestChildRectangleOnScreen(focused, field, true)
+                    }
+                }
+            }
+            insets
+        }
     }
 
     private fun clearErrors() {

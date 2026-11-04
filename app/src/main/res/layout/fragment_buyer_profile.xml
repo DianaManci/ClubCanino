@@ -66,16 +66,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/buyer_text"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/text_title"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/textEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="@dimen/spacing_xs"
                             android:textColor="@color/buyer_text_muted"
-                            android:textSize="14sp" />
+                            android:textSize="@dimen/text_body_small" />
 
                         <TextView
                             android:id="@+id/textPhone"
@@ -83,7 +83,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="@color/buyer_text_muted"
-                            android:textSize="14sp" />
+                            android:textSize="@dimen/text_body_small" />
 
                         <TextView
                             android:id="@+id/textCity"
@@ -91,7 +91,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="@color/buyer_forest"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_body_small"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
@@ -119,7 +119,7 @@
                     android:layout_weight="1"
                     android:text="@string/buyer_pets_title"
                     android:textColor="@color/buyer_text"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_subtitle"
                     android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
@@ -163,7 +163,7 @@
                     android:layout_marginStart="6dp"
                     android:text="@string/buyer_orders_title"
                     android:textColor="@color/buyer_text"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_subtitle"
                     android:textStyle="bold" />
             </LinearLayout>
 

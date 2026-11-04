@@ -40,7 +40,7 @@ class SellerDashboardFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         val root = view ?: return
-        val profile = SellerProfileStore.get()
+        val profile = SellerProfileStore.current(requireContext())
         val firstName = profile.fullName.substringBefore(' ').ifBlank { profile.fullName }
         root.findViewById<TextView>(R.id.textWelcome).text =
             getString(R.string.seller_dashboard_hello, firstName)

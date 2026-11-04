@@ -58,6 +58,7 @@ class BuyerCartFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        CartStore.bind(requireContext())
         headerBinder?.start()
         CartStore.addListener(cartListener)
         renderCart()

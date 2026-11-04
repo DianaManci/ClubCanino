@@ -69,10 +69,14 @@ class AdminUsersFragment : Fragment() {
         val layoutEmail = form.findViewById<TextInputLayout>(R.id.layoutUserEmail)
         val layoutPhone = form.findViewById<TextInputLayout>(R.id.layoutUserPhone)
         val layoutRole = form.findViewById<TextInputLayout>(R.id.layoutUserRole)
+        val layoutPassword = form.findViewById<TextInputLayout>(R.id.layoutUserPassword)
+        val layoutConfirmPassword = form.findViewById<TextInputLayout>(R.id.layoutUserConfirmPassword)
         val editName = form.findViewById<TextInputEditText>(R.id.editUserName)
         val editEmail = form.findViewById<TextInputEditText>(R.id.editUserEmail)
         val editPhone = form.findViewById<TextInputEditText>(R.id.editUserPhone)
         val editRole = form.findViewById<TextInputEditText>(R.id.editUserRole)
+        val editPassword = form.findViewById<TextInputEditText>(R.id.editUserPassword)
+        val editConfirmPassword = form.findViewById<TextInputEditText>(R.id.editUserConfirmPassword)
 
         if (user != null) {
             editName.setText(user.fullName)
@@ -94,12 +98,17 @@ class AdminUsersFragment : Fragment() {
                 layoutEmail.error = null
                 layoutPhone.error = null
                 layoutRole.error = null
+                layoutPassword.error = null
+                layoutConfirmPassword.error = null
 
                 val name = editName.text?.toString()?.trim().orEmpty()
                 val email = editEmail.text?.toString()?.trim().orEmpty()
                 val phone = editPhone.text?.toString()?.trim().orEmpty()
                 val roleRaw = editRole.text?.toString()?.trim().orEmpty()
                 val role = ShopUserStore.canonicalRole(roleRaw)
+                val password = editPassword.text?.toString().orEmpty()
+                val confirmPassword = editConfirmPassword.text?.toString().orEmpty()
+                val editing = user
 
                 var valid = true
                 if (name.isEmpty()) {
@@ -124,12 +133,35 @@ class AdminUsersFragment : Fragment() {
                     layoutRole.error = getString(R.string.error_role_invalid)
                     valid = false
                 }
+                if (editing == null || password.isNotEmpty() || confirmPassword.isNotEmpty()) {
+                    if (AuthValidator.isBlank(password)) {
+                        layoutPassword.error = getString(R.string.error_field_required)
+                        valid = false
+                    } else if (!AuthValidator.isValidPassword(password)) {
+                        layoutPassword.error = getString(R.string.error_password_short)
+                        valid = false
+                    }
+                    if (AuthValidator.isBlank(confirmPassword)) {
+                        layoutConfirmPassword.error = getString(R.string.error_field_required)
+                        valid = false
+                    } else if (!AuthValidator.passwordsMatch(password, confirmPassword)) {
+                        layoutConfirmPassword.error = getString(R.string.error_password_mismatch)
+                        valid = false
+                    }
+                }
                 if (!valid || role == null) return@setOnClickListener
 
-                val result = if (user == null) {
-                    ShopUserStore.add(name, email, phone, role)
+                val result = if (editing == null) {
+                    ShopUserStore.add(name, email, phone, role, password)
                 } else {
-                    ShopUserStore.update(user.id, name, email, phone, role)
+                    ShopUserStore.update(
+                        id = editing.id,
+                        fullName = name,
+                        email = email,
+                        phone = phone,
+                        role = role,
+                        newPassword = password.takeIf { it.isNotEmpty() }
+                    )
                 }
                 when (result) {
                     ShopUserWrite.SAVED -> {

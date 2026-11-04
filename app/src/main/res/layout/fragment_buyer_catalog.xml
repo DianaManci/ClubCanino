@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:text="@string/buyer_catalog_headline"
             android:textColor="@color/buyer_text"
-            android:textSize="24sp"
+            android:textSize="@dimen/text_headline"
             android:textStyle="bold" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_marginTop="2dp"
             android:text="@string/buyer_catalog_subtitle"
             android:textColor="@color/buyer_text_muted"
-            android:textSize="14sp" />
+            android:textSize="@dimen/text_body_small" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayoutSearch"
@@ -80,7 +80,7 @@
         android:paddingEnd="@dimen/screen_padding_horizontal"
         android:text="@string/msg_empty_state"
         android:textColor="@color/buyer_text_muted"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_body_small"
         android:visibility="gone" />
 
     <androidx.core.widget.NestedScrollView

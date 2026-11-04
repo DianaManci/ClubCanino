@@ -1,6 +1,8 @@
 package com.clubcanino.app.seller.data
 
 import android.content.Context
+import com.clubcanino.app.admin.data.ShopUserStore
+import com.clubcanino.app.buyer.data.BuyerSession
 
 /**
  * Orders shared by the buyer checkout, the seller and the admin report.
@@ -55,6 +57,13 @@ object ShopOrders {
         return ordersInternal.count { it.status == status }
     }
 
+    fun forBuyer(email: String): List<ShopOrder> {
+        ensureLoaded()
+        val key = BuyerSession.normalizeEmail(email)
+        if (key.isEmpty()) return emptyList()
+        return ordersInternal.filter { it.buyerEmail.equals(key, ignoreCase = true) }
+    }
+
     fun recent(limit: Int): List<ShopOrder> {
         ensureLoaded()
         val active = ordersInternal.filter { !it.isHistory }
@@ -85,9 +94,14 @@ object ShopOrders {
      * The initial status is pending, so the seller sees it under orders to manage
      * and the admin report includes it in the full list and the pending filter.
      */
-    fun place(buyerName: String, lines: List<ShopOrderLine>, dateLabel: String): ShopOrder? {
+    fun place(
+        buyerName: String,
+        lines: List<ShopOrderLine>,
+        dateLabel: String,
+        buyerEmail: String
+    ): ShopOrder? {
         ensureLoaded()
-        if (buyerName.isBlank() || lines.isEmpty()) return null
+        if (buyerName.isBlank() || buyerEmail.isBlank() || lines.isEmpty()) return null
         var nextNumber = ordersInternal
             .mapNotNull { it.id.removePrefix("ORD-").toIntOrNull() }
             .maxOrNull()
@@ -101,7 +115,8 @@ object ShopOrders {
             buyerName = buyerName.trim(),
             dateLabel = dateLabel,
             status = ShopOrderStatus.PENDING,
-            lines = lines
+            lines = lines,
+            buyerEmail = BuyerSession.normalizeEmail(buyerEmail)
         )
         if (ordersInternal.any { it.id == order.id }) return ordersInternal.first { it.id == order.id }
         ordersInternal.add(0, order)
@@ -130,6 +145,29 @@ object ShopOrders {
             ordersInternal.addAll(demoOrders())
             persist()
         }
+        linkPurchasesMissingEmail()
+    }
+
+    /**
+     * Purchases saved before the buyer email existed keep their name.
+     * Demo orders stay without an email, so they are not listed as a buyer's own purchases.
+     */
+    private fun linkPurchasesMissingEmail() {
+        val context = appContext ?: return
+        ShopUserStore.bind(context)
+        val buyers = ShopUserStore.users().filter { it.role == ShopUserStore.ROLE_BUYER }
+        var changed = false
+        val linked = ordersInternal.map { order ->
+            if (order.buyerEmail.isNotBlank() || order.id in DEMO_ORDER_IDS) return@map order
+            val matches = buyers.filter { it.fullName.equals(order.buyerName, ignoreCase = true) }
+            if (matches.size != 1) return@map order
+            changed = true
+            order.copy(buyerEmail = BuyerSession.normalizeEmail(matches.first().email))
+        }
+        if (!changed) return
+        ordersInternal.clear()
+        ordersInternal.addAll(linked)
+        persist()
     }
 
     private fun persist() {
@@ -207,4 +245,13 @@ object ShopOrders {
     )
 
     const val FILTER_ALL = "Todos"
+
+    private val DEMO_ORDER_IDS = setOf(
+        "ORD-2048",
+        "ORD-2044",
+        "ORD-2039",
+        "ORD-2010",
+        "ORD-1994",
+        "ORD-1977"
+    )
 }

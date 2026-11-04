@@ -28,16 +28,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/seller_profile_title"
                 android:textColor="@color/buyer_text"
-                android:textSize="24sp"
+                android:textSize="@dimen/text_headline"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/spacing_xs"
                 android:text="@string/seller_profile_subtitle"
                 android:textColor="@color/buyer_text_muted"
-                android:textSize="14sp" />
+                android:textSize="@dimen/text_body_small" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -82,16 +82,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/buyer_text"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/text_title"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/textStoreName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="@dimen/spacing_xs"
                             android:textColor="@color/buyer_forest"
-                            android:textSize="15sp"
+                            android:textSize="@dimen/text_medium"
                             android:textStyle="bold" />
 
                         <TextView
@@ -100,7 +100,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:textColor="@color/buyer_text_muted"
-                            android:textSize="14sp" />
+                            android:textSize="@dimen/text_body_small" />
 
                         <TextView
                             android:id="@+id/textSellerPhone"
@@ -108,7 +108,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="@color/buyer_text_muted"
-                            android:textSize="14sp" />
+                            android:textSize="@dimen/text_body_small" />
 
                         <TextView
                             android:id="@+id/textSellerCity"
@@ -116,7 +116,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="@color/buyer_text_muted"
-                            android:textSize="14sp" />
+                            android:textSize="@dimen/text_body_small" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -139,7 +139,7 @@
                 android:layout_marginTop="@dimen/spacing_md"
                 android:text="@string/seller_profile_demo_notice"
                 android:textColor="@color/buyer_text_muted"
-                android:textSize="12sp" />
+                android:textSize="@dimen/text_caption" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

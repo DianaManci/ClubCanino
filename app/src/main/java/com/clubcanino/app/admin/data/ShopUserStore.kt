@@ -49,6 +49,13 @@ object ShopUserStore {
     fun canonicalRole(raw: String): String? =
         roles.find { it.equals(raw.trim(), ignoreCase = true) }
 
+    fun findByEmail(email: String): ShopUser? {
+        ensureLoaded()
+        val key = email.trim()
+        if (key.isEmpty()) return null
+        return usersInternal.find { it.email.equals(key, ignoreCase = true) }
+    }
+
     fun authenticate(email: String, password: String): ShopUser? {
         ensureLoaded()
         val user = usersInternal.find { it.email.equals(email.trim(), ignoreCase = true) } ?: return null
@@ -57,7 +64,7 @@ object ShopUserStore {
     }
 
     fun register(fullName: String, email: String, password: String): ShopUserWrite {
-        return add(
+        return create(
             fullName = fullName,
             email = email,
             phone = DEFAULT_PHONE,
@@ -70,12 +77,23 @@ object ShopUserStore {
         return add(fullName, email, phone, role, INITIAL_PASSWORD)
     }
 
+    fun add(
+        fullName: String,
+        email: String,
+        phone: String,
+        role: String,
+        password: String
+    ): ShopUserWrite {
+        return create(fullName, email, phone, role, password)
+    }
+
     fun update(
         id: String,
         fullName: String,
         email: String,
         phone: String,
-        role: String
+        role: String,
+        newPassword: String? = null
     ): ShopUserWrite {
         ensureLoaded()
         val index = usersInternal.indexOfFirst { it.id == id }
@@ -89,6 +107,9 @@ object ShopUserStore {
             phone = phone,
             role = role
         )
+        if (!newPassword.isNullOrEmpty()) {
+            passwords[id] = PasswordHasher.create(newPassword)
+        }
         persist()
         return ShopUserWrite.SAVED
     }
@@ -103,7 +124,7 @@ object ShopUserStore {
         return ShopUserWrite.SAVED
     }
 
-    private fun add(
+    private fun create(
         fullName: String,
         email: String,
         phone: String,

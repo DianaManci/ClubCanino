@@ -73,22 +73,12 @@
     <string name="error_password_mismatch">Las contraseñas no coinciden</string>
     <string name="error_login_invalid">Correo o contraseña incorrectos</string>
 
-    <!-- Pending integration messages -->
-    <string name="msg_login_pending">
-        Los datos del formulario son válidos, pero la autenticación real aún no está integrada.
-        El acceso con credenciales se conectará en una etapa posterior.
-    </string>
-    <string name="msg_register_pending">
-        Los datos del formulario son válidos, pero el registro real aún no está disponible.
-        La creación de cuentas se conectará cuando exista backend o base de datos.
-    </string>
+    <!-- Messages -->
     <string name="msg_recovery_pending">
-        El correo tiene un formato válido, pero el envío de recuperación aún no está disponible.
-        Este servicio se habilitará cuando se integre el backend de correo.
+        El correo tiene un formato válido. Esta versión no envía el enlace de recuperación.
     </string>
     <string name="msg_biometric_success_local">
-        La huella se verificó correctamente en este dispositivo.
-        El inicio de sesión de la aplicación seguirá pendiente hasta integrar la autenticación real.
+        La huella se verificó en este dispositivo. Para entrar a la tienda usa tu correo y contraseña.
     </string>
     <string name="msg_biometric_unavailable">
         Este dispositivo no admite autenticación biométrica o no hay huellas configuradas.
@@ -99,12 +89,9 @@
 
     <!-- Role selection (demo navigation) -->
     <string name="role_selection_title">Elige un rol</string>
-    <string name="role_selection_subtitle">Explora la navegación de cada tipo de usuario</string>
+    <string name="role_selection_subtitle">Solo está disponible el rol de tu cuenta</string>
     <string name="role_selection_demo_notice">
-        Demostración: aún no hay autenticación real. Selecciona un rol para abrir su panel de navegación.
-    </string>
-    <string name="msg_role_screen_placeholder">
-        Pantalla base lista para la siguiente etapa. Aquí se implementará la funcionalidad real del módulo.
+        Cada usuario entra con el rol que tiene asignado.
     </string>
 
     <!-- Bottom navigation labels -->
@@ -118,10 +105,7 @@
     <string name="nav_users">Usuarios</string>
     <string name="nav_sales">Ventas</string>
 
-    <!-- Buyer placeholders -->
-    <string name="buyer_home_title">Inicio comprador</string>
-    <string name="buyer_home_subtitle">Resumen y novedades para tu mascota</string>
-    <string name="buyer_catalog_title">Catálogo</string>
+    <!-- Buyer module -->
     <string name="buyer_catalog_subtitle">Productos y servicios disponibles</string>
     <string name="buyer_cart_title">Carrito</string>
     <string name="buyer_cart_subtitle">Revisa tus productos antes de pagar</string>
@@ -139,7 +123,6 @@
     <string name="seller_profile_subtitle">Datos de tu cuenta de vendedor</string>
 
     <!-- Admin placeholders -->
-    <string name="admin_dashboard_title">Dashboard</string>
     <string name="admin_dashboard_subtitle">Estado actual de la tienda</string>
     <string name="admin_users_title">Gestión de usuarios</string>
     <string name="admin_users_subtitle">Administra compradores y vendedores</string>
@@ -149,8 +132,6 @@
     <string name="admin_sales_subtitle">Consulta el rendimiento de ventas</string>
 
     <!-- Buyer module -->
-    <string name="buyer_welcome">Hola, Ana</string>
-    <string name="buyer_welcome_subtitle">Encuentra lo mejor para tu mascota hoy</string>
     <string name="hint_search_products">Buscar productos</string>
     <string name="buyer_promo_title">Promociones especiales</string>
     <string name="buyer_promo_subtitle">Hasta 30% de descuento</string>
@@ -162,6 +143,8 @@
     <string name="buyer_hero_subtitle">Productos y amor para tu mejor amigo</string>
     <string name="action_buy_now">Comprar ahora →</string>
     <string name="action_see_all">Ver todos</string>
+    <string name="action_quantity_decrease">−</string>
+    <string name="action_quantity_increase">+</string>
     <string name="buyer_quick_catalog">Catálogo</string>
     <string name="buyer_quick_promos">Promociones</string>
     <string name="buyer_quick_pets">Mis Mascotas</string>
@@ -212,6 +195,7 @@
     <string name="action_back_to_store">Volver a la tienda</string>
     <string name="buyer_pets_title">Mis mascotas</string>
     <string name="buyer_orders_title">Historial de pedidos</string>
+    <string name="buyer_orders_empty">Aún no tienes pedidos confirmados.</string>
     <string name="action_add_pet">Agregar mascota</string>
     <string name="action_edit_pet">Editar mascota</string>
     <string name="hint_pet_name">Nombre</string>
@@ -236,6 +220,7 @@
     <string name="shop_product_meta">%1$s · %2$s · Stock %3$d · %4$s</string>
     <string name="shop_product_detail">%1$s · %2$s\nPrecio: %3$s\nStock: %4$d\nEstado: %5$s\n\n%6$s</string>
     <string name="seller_store_line">Tienda: %1$s</string>
+    <string name="seller_store_default">Mi tienda</string>
     <string name="shop_product_no_description">Sin descripción</string>
     <string name="action_view">Consultar</string>
     <string name="action_view_order">Ver pedido</string>

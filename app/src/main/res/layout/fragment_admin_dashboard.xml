@@ -29,16 +29,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/admin_dashboard_welcome"
                 android:textColor="@color/buyer_text"
-                android:textSize="26sp"
+                android:textSize="@dimen/text_screen_title"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/spacing_xs"
                 android:text="@string/admin_dashboard_subtitle"
                 android:textColor="@color/buyer_text_muted"
-                android:textSize="14sp" />
+                android:textSize="@dimen/text_body_small" />
 
             <LinearLayout
                 android:id="@+id/containerStats"
@@ -58,7 +58,7 @@
                     android:id="@+id/buttonOpenUsers"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="@dimen/spacing_sm"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
@@ -90,7 +90,7 @@
                             android:layout_marginTop="6dp"
                             android:text="@string/nav_users"
                             android:textColor="@color/buyer_text"
-                            android:textSize="13sp" />
+                            android:textSize="@dimen/text_small" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -98,7 +98,7 @@
                     android:id="@+id/buttonOpenProducts"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="@dimen/spacing_sm"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
@@ -129,7 +129,7 @@
                             android:layout_marginTop="6dp"
                             android:text="@string/nav_products"
                             android:textColor="@color/buyer_text"
-                            android:textSize="13sp" />
+                            android:textSize="@dimen/text_small" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -167,7 +167,7 @@
                             android:layout_marginTop="6dp"
                             android:text="@string/nav_sales"
                             android:textColor="@color/buyer_text"
-                            android:textSize="13sp" />
+                            android:textSize="@dimen/text_small" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
@@ -194,7 +194,7 @@
                     android:layout_weight="1"
                     android:text="@string/admin_recent_orders"
                     android:textColor="@color/buyer_text"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_subtitle"
                     android:textStyle="bold" />
 
                 <TextView
@@ -202,10 +202,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
-                    android:padding="4dp"
+                    android:padding="@dimen/spacing_xs"
                     android:text="@string/action_see_all"
                     android:textColor="@color/buyer_forest"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_body_small"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -220,7 +220,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="168dp"
                 android:layout_marginTop="@dimen/spacing_md"
-                app:cardCornerRadius="24dp"
+                app:cardCornerRadius="@dimen/radius_xl"
                 app:cardElevation="3dp"
                 app:contentPadding="0dp"
                 app:strokeWidth="0dp">
@@ -240,7 +240,7 @@
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|end"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="@dimen/spacing_lg"
                         android:orientation="vertical">
 
                         <TextView
@@ -248,7 +248,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/admin_banner_title"
                             android:textColor="@color/buyer_forest"
-                            android:textSize="18sp"
+                            android:textSize="@dimen/text_subtitle"
                             android:textStyle="bold" />
 
                         <TextView
@@ -256,7 +256,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/admin_banner_subtitle"
                             android:textColor="@color/buyer_forest"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_body"
                             android:textStyle="italic" />
                     </LinearLayout>
                 </FrameLayout>

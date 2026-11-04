@@ -44,10 +44,6 @@
             android:exported="false" />
 
         <activity
-            android:name=".navigation.RoleSelectionActivity"
-            android:exported="false" />
-
-        <activity
             android:name=".buyer.BuyerMainActivity"
             android:exported="false" />
 
@@ -68,10 +64,6 @@
             android:name=".admin.AdminMainActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

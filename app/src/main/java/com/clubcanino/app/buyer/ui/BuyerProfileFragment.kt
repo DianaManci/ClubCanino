@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
 import com.clubcanino.app.buyer.data.BuyerDemoData
 import com.clubcanino.app.buyer.data.Pet
+import com.clubcanino.app.seller.data.ShopOrders
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -33,12 +34,7 @@ class BuyerProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         headerBinder = BuyerHeaderBinder(this, view).also { it.bind() }
         BuyerDemoData.ensurePetsLoaded(requireContext())
-
-        val profile = BuyerDemoData.profile(requireContext())
-        view.findViewById<TextView>(R.id.textName).text = profile.fullName
-        view.findViewById<TextView>(R.id.textEmail).text = profile.email
-        view.findViewById<TextView>(R.id.textPhone).text = profile.phone
-        view.findViewById<TextView>(R.id.textCity).text = profile.city
+        bindAccount(view)
 
         petsContainer = view.findViewById(R.id.containerPets)
         ordersContainer = view.findViewById(R.id.containerOrders)
@@ -54,6 +50,28 @@ class BuyerProfileFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         headerBinder?.start()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        view?.let { bindAccount(it) }
+        if (::ordersContainer.isInitialized) {
+            renderOrders()
+        }
+    }
+
+    private fun bindAccount(view: View) {
+        val profile = BuyerDemoData.profile(requireContext())
+        view.findViewById<TextView>(R.id.textName).text = profile.fullName
+        view.findViewById<TextView>(R.id.textEmail).text = profile.email
+        view.findViewById<TextView>(R.id.textPhone).text = profile.phone
+        val city = view.findViewById<TextView>(R.id.textCity)
+        if (profile.city.isBlank()) {
+            city.visibility = View.GONE
+        } else {
+            city.visibility = View.VISIBLE
+            city.text = profile.city
+        }
     }
 
     override fun onStop() {
@@ -92,7 +110,18 @@ class BuyerProfileFragment : Fragment() {
     private fun renderOrders() {
         ordersContainer.removeAllViews()
         val inflater = layoutInflater
-        BuyerDemoData.orders.forEach { order ->
+        ShopOrders.bind(requireContext())
+        val orders = ShopOrders.forBuyer(BuyerDemoData.profile(requireContext()).email)
+        if (orders.isEmpty()) {
+            val empty = TextView(requireContext()).apply {
+                text = getString(R.string.buyer_orders_empty)
+                setTextAppearance(R.style.TextAppearance_ClubCanino_Body_Secondary)
+                setTextColor(ContextCompat.getColor(context, R.color.buyer_text_muted))
+            }
+            ordersContainer.addView(empty)
+            return
+        }
+        orders.forEach { order ->
             val row = inflater.inflate(R.layout.item_order_row, ordersContainer, false)
             row.findViewById<TextView>(R.id.textOrderId).text = order.id
             row.findViewById<TextView>(R.id.textOrderMeta).text = getString(

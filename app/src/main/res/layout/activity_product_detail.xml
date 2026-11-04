@@ -15,9 +15,9 @@
         android:background="@color/buyer_forest"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="4dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="@dimen/spacing_xs"
+        android:paddingTop="@dimen/spacing_sm"
+        android:paddingEnd="@dimen/spacing_lg"
         android:paddingBottom="14dp">
 
         <ImageButton
@@ -34,7 +34,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="@dimen/spacing_xs"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -43,15 +43,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
                 android:textColor="@color/white"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_subtitle"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/buyer_brand_tagline"
-                android:textColor="#E8FFFFFF"
-                android:textSize="12sp" />
+                android:textColor="@color/text_on_forest_soft"
+                android:textSize="@dimen/text_caption" />
         </LinearLayout>
 
         <ImageView
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_lg"
                 android:textColor="@color/buyer_text"
-                android:textSize="24sp"
+                android:textSize="@dimen/text_headline"
                 android:textStyle="bold"
                 tools:text="Producto" />
 
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xs"
                 android:textColor="@color/buyer_text_muted"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_body_small"
                 tools:text="Perros · Alimentos" />
 
             <TextView
@@ -121,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_sm"
                 android:textColor="@color/buyer_forest"
-                android:textSize="22sp"
+                android:textSize="@dimen/text_section"
                 android:textStyle="bold"
                 tools:text="$ 0" />
 
@@ -140,7 +140,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/buyer_text"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/text_medium"
                     tools:text="Descripción" />
             </com.google.android.material.card.MaterialCardView>
 
@@ -150,7 +150,7 @@
                 android:layout_marginTop="@dimen/spacing_xl"
                 android:text="@string/label_quantity"
                 android:textColor="@color/buyer_text"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_body_small"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -168,7 +168,7 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:minWidth="0dp"
-                    android:text="-"
+                    android:text="@string/action_quantity_decrease"
                     android:textColor="@color/buyer_forest"
                     android:textSize="@dimen/text_title"
                     app:backgroundTint="@color/white"
@@ -183,7 +183,7 @@
                     android:gravity="center"
                     android:minWidth="@dimen/icon_size_xl"
                     android:textColor="@color/buyer_text"
-                    android:textSize="24sp"
+                    android:textSize="@dimen/text_headline"
                     android:textStyle="bold"
                     tools:text="1" />
 
@@ -195,7 +195,7 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:minWidth="0dp"
-                    android:text="+"
+                    android:text="@string/action_quantity_increase"
                     android:textColor="@color/buyer_forest"
                     android:textSize="@dimen/text_title"
                     app:backgroundTint="@color/white"

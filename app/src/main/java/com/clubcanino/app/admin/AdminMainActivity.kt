@@ -4,6 +4,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.clubcanino.app.R
+import com.clubcanino.app.admin.data.ShopUserStore
 import com.clubcanino.app.admin.ui.AdminDashboardFragment
 import com.clubcanino.app.admin.ui.AdminProductsFragment
 import com.clubcanino.app.admin.ui.AdminSalesFragment
@@ -16,6 +17,8 @@ class AdminMainActivity : RoleHostActivity() {
     override fun bottomMenuRes(): Int = R.menu.menu_admin
 
     override fun defaultSelectedItemId(): Int = R.id.nav_admin_dashboard
+
+    override fun requiredRole(): String = ShopUserStore.ROLE_ADMIN
 
     override fun onHostConfigured() {
         RoleChrome.apply(this)

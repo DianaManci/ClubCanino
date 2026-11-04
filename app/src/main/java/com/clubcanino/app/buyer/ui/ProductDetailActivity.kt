@@ -64,6 +64,7 @@ class ProductDetailActivity : AppCompatActivity() {
         )
 
         ShopCatalog.bind(this)
+        CartStore.bind(this)
         val productId = intent.getStringExtra(EXTRA_PRODUCT_ID).orEmpty()
         val product = ShopCatalog.buyerProduct(productId)
         if (product == null) {

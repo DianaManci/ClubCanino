@@ -29,16 +29,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/buyer_text"
-                android:textSize="26sp"
+                android:textSize="@dimen/text_screen_title"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/spacing_xs"
                 android:text="@string/seller_dashboard_subtitle"
                 android:textColor="@color/buyer_text_muted"
-                android:textSize="14sp" />
+                android:textSize="@dimen/text_body_small" />
 
             <LinearLayout
                 android:id="@+id/containerStats"
@@ -68,7 +68,7 @@
                     android:layout_marginStart="6dp"
                     android:text="@string/seller_quick_access"
                     android:textColor="@color/buyer_text"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_subtitle"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -83,7 +83,7 @@
                     android:id="@+id/buttonOpenProducts"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="@dimen/spacing_sm"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
@@ -111,10 +111,10 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="@dimen/spacing_sm"
                             android:text="@string/nav_products"
                             android:textColor="@color/buyer_text"
-                            android:textSize="13sp" />
+                            android:textSize="@dimen/text_small" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -122,7 +122,7 @@
                     android:id="@+id/buttonOpenOrders"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="@dimen/spacing_sm"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
@@ -150,10 +150,10 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="@dimen/spacing_sm"
                             android:text="@string/nav_orders"
                             android:textColor="@color/buyer_text"
-                            android:textSize="13sp" />
+                            android:textSize="@dimen/text_small" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -189,10 +189,10 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="@dimen/spacing_sm"
                             android:text="@string/nav_profile"
                             android:textColor="@color/buyer_text"
-                            android:textSize="13sp" />
+                            android:textSize="@dimen/text_small" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
@@ -201,7 +201,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="168dp"
                 android:layout_marginTop="@dimen/spacing_lg"
-                app:cardCornerRadius="24dp"
+                app:cardCornerRadius="@dimen/radius_xl"
                 app:cardElevation="3dp"
                 app:contentPadding="0dp"
                 app:strokeWidth="0dp">
@@ -221,10 +221,10 @@
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|end"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="@dimen/spacing_lg"
                         android:text="@string/seller_banner_message"
                         android:textColor="@color/buyer_forest"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_subtitle"
                         android:textStyle="bold" />
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>

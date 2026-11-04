@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_screen"
     android:fillViewport="true"
+    android:isScrollContainer="true"
+    android:clipToPadding="false"
     tools:context=".auth.LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout

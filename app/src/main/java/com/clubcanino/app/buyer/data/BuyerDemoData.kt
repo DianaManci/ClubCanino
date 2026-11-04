@@ -2,6 +2,7 @@ package com.clubcanino.app.buyer.data
 
 import android.content.Context
 import com.clubcanino.app.R
+import com.clubcanino.app.admin.data.ShopUserStore
 
 object BuyerDemoData {
 
@@ -20,11 +21,17 @@ object BuyerDemoData {
     private val petsInternal = mutableListOf<Pet>()
 
     fun profile(context: Context): BuyerProfile {
+        ShopUserStore.bind(context)
+        val email = BuyerSession.currentEmail(context).orEmpty()
+        if (email.isEmpty()) {
+            return BuyerProfile(fullName = "", email = "", phone = "", city = "")
+        }
+        val user = ShopUserStore.findByEmail(email)
         return BuyerProfile(
-            fullName = "Ana Gómez",
-            email = BuyerSession.currentBuyerId(context),
-            phone = "+57 300 555 1212",
-            city = "Bogotá"
+            fullName = user?.fullName?.takeIf { it.isNotBlank() } ?: email,
+            email = user?.email?.takeIf { it.isNotBlank() } ?: email,
+            phone = user?.phone.orEmpty(),
+            city = ""
         )
     }
 

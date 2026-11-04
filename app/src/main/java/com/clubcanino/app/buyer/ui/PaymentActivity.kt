@@ -30,6 +30,7 @@ class PaymentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ShopOrders.bind(this)
+        CartStore.bind(this)
         enableEdgeToEdge()
         setContentView(R.layout.activity_payment)
         window.statusBarColor = getColor(R.color.buyer_forest)
@@ -100,7 +101,7 @@ class PaymentActivity : AppCompatActivity() {
             val name = TextView(this).apply {
                 text = item.product.name
                 setTextColor(getColor(R.color.buyer_text))
-                textSize = 15f
+                setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.text_medium))
             }
             val meta = TextView(this).apply {
                 text = getString(
@@ -110,7 +111,7 @@ class PaymentActivity : AppCompatActivity() {
                     MoneyFormat.format(item.lineTotal)
                 )
                 setTextColor(getColor(R.color.buyer_text_muted))
-                textSize = 13f
+                setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.text_small))
             }
             block.addView(name)
             block.addView(meta)
@@ -141,7 +142,11 @@ class PaymentActivity : AppCompatActivity() {
         }
 
         val method = findViewById<RadioButton>(selectedId).text.toString()
-        val buyerName = BuyerDemoData.profile(this).fullName
+        val buyer = BuyerDemoData.profile(this)
+        if (buyer.fullName.isBlank() || buyer.email.isBlank()) {
+            Toast.makeText(this, R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+            return
+        }
         val lines = items.map { item ->
             ShopOrderLine(
                 productId = item.product.id,
@@ -150,14 +155,14 @@ class PaymentActivity : AppCompatActivity() {
                 unitPrice = item.product.price
             )
         }
-        val order = ShopOrders.place(buyerName, lines, todayLabel())
+        val order = ShopOrders.place(buyer.fullName, lines, todayLabel(), buyer.email)
         if (order == null) {
             Toast.makeText(this, R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
             return
         }
         purchaseConfirmed = true
         CartStore.clear()
-        showConfirmation(order, buyerName, method)
+        showConfirmation(order, buyer.fullName, method)
     }
 
     private fun showConfirmation(order: ShopOrder, buyerName: String, method: String) {

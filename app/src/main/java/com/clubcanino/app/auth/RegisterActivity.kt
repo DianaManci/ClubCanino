@@ -1,6 +1,8 @@
 package com.clubcanino.app.auth
 
+import android.graphics.Rect
 import android.os.Bundle
+import android.widget.ScrollView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -31,17 +33,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_register)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.registerRoot)) { view, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(
-                view.paddingLeft + bars.left,
-                view.paddingTop + bars.top,
-                view.paddingRight + bars.right,
-                view.paddingBottom + bars.bottom
-            )
-            insets
-        }
+        keepFocusedFieldVisible(findViewById(R.id.registerScroll))
 
         inputLayoutName = findViewById(R.id.inputLayoutName)
         inputLayoutEmail = findViewById(R.id.inputLayoutEmail)
@@ -111,6 +103,23 @@ class RegisterActivity : AppCompatActivity() {
             else -> {
                 Toast.makeText(this, R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun keepFocusedFieldVisible(scroll: ScrollView) {
+        ViewCompat.setOnApplyWindowInsetsListener(scroll) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            view.setPadding(bars.left, bars.top, bars.right, maxOf(bars.bottom, ime.bottom))
+            if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
+                currentFocus?.let { focused ->
+                    view.post {
+                        val field = Rect(0, 0, focused.width, focused.height)
+                        scroll.requestChildRectangleOnScreen(focused, field, true)
+                    }
+                }
+            }
+            insets
         }
     }
 
