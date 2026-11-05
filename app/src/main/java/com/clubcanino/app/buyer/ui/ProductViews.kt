@@ -26,10 +26,11 @@ object ProductViews {
     fun bindProductCard(view: View, product: Product, onClick: (Product) -> Unit) {
         val image = view.findViewById<ImageView>(R.id.imageProduct)
         (image.parent as View).clipToOutline = true
-        image.setImageResource(BuyerVisuals.photoRes(product))
+        RemoteImages.load(image, product.photoUrl, BuyerVisuals.photoRes(product))
         view.findViewById<TextView>(R.id.textName).text = product.name
+        val storePrefix = product.storeName.takeIf { it.isNotBlank() }?.let { "$it · " }.orEmpty()
         view.findViewById<TextView>(R.id.textCategory).text = if (product.available) {
-            view.context.getString(R.string.product_card_meta, product.petType, product.category)
+            storePrefix + view.context.getString(R.string.product_card_meta, product.petType, product.category)
         } else {
             view.context.getString(
                 R.string.product_card_meta_unavailable,

@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
 import com.clubcanino.app.buyer.BuyerMainActivity
 import com.clubcanino.app.buyer.data.BuyerDemoData
-import com.clubcanino.app.seller.data.ShopCatalog
+import com.clubcanino.app.seller.data.MarketCatalog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
@@ -89,8 +89,7 @@ class BuyerHomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        ShopCatalog.bind(requireContext())
-        renderFeatured()
+        MarketCatalog.refresh(requireContext()) { if (isAdded) renderFeatured() }
     }
 
     private fun renderFeatured() {
@@ -98,7 +97,7 @@ class BuyerHomeFragment : Fragment() {
         container.removeAllViews()
         val cardWidth = resources.getDimensionPixelSize(R.dimen.buyer_featured_card_width)
         val cardGap = resources.getDimensionPixelSize(R.dimen.spacing_md)
-        ShopCatalog.featuredForBuyer().forEach { product ->
+        MarketCatalog.featured().forEach { product ->
             val card = ProductViews.inflateProductCard(layoutInflater, container, product) {
                 startActivity(ProductDetailActivity.createIntent(requireContext(), it.id))
             }

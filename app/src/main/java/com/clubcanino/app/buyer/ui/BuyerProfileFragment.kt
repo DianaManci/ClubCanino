@@ -33,7 +33,7 @@ class BuyerProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         headerBinder = BuyerHeaderBinder(this, view).also { it.bind() }
-        BuyerDemoData.ensurePetsLoaded(requireContext())
+        BuyerDemoData.ensurePetsLoaded(requireContext()) { if (isAdded) renderPets() }
         bindAccount(view)
 
         petsContainer = view.findViewById(R.id.containerPets)
@@ -55,6 +55,9 @@ class BuyerProfileFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         view?.let { bindAccount(it) }
+        if (::petsContainer.isInitialized) {
+            BuyerDemoData.ensurePetsLoaded(requireContext()) { if (isAdded) renderPets() }
+        }
         if (::ordersContainer.isInitialized) {
             renderOrders()
         }
@@ -185,26 +188,21 @@ class BuyerProfileFragment : Fragment() {
                 val resolvedBreed = breed.ifEmpty { getString(R.string.pet_breed_default) }
                 val resolvedAge = age.ifEmpty { getString(R.string.pet_age_default) }
 
-                if (isEdit) {
-                    BuyerDemoData.updatePet(
-                        id = pet!!.id,
-                        name = name,
-                        species = species,
-                        breed = resolvedBreed,
-                        ageLabel = resolvedAge
-                    )
-                    Toast.makeText(context, R.string.msg_pet_updated, Toast.LENGTH_SHORT).show()
-                } else {
-                    BuyerDemoData.addPet(
-                        name = name,
-                        species = species,
-                        breed = resolvedBreed,
-                        ageLabel = resolvedAge
-                    )
-                    Toast.makeText(context, R.string.msg_pet_added, Toast.LENGTH_SHORT).show()
+                val finish: (Boolean) -> Unit = { saved ->
+                    if (!saved) {
+                        Toast.makeText(context, R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+                    } else {
+                        val message = if (isEdit) R.string.msg_pet_updated else R.string.msg_pet_added
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        if (isAdded) renderPets()
+                        dialog.dismiss()
+                    }
                 }
-                renderPets()
-                dialog.dismiss()
+                if (isEdit) {
+                    BuyerDemoData.updatePet(pet!!.id, name, species, resolvedBreed, resolvedAge, finish)
+                } else {
+                    BuyerDemoData.addPet(name, species, resolvedBreed, resolvedAge, finish)
+                }
             }
             // Cancel closes without mutating data (default AlertDialog behavior).
         }
@@ -217,9 +215,14 @@ class BuyerProfileFragment : Fragment() {
             .setTitle(R.string.dialog_delete_pet_title)
             .setMessage(getString(R.string.dialog_delete_pet_message, pet.name))
             .setPositiveButton(R.string.action_delete) { _, _ ->
-                BuyerDemoData.removePet(pet.id)
-                renderPets()
-                Toast.makeText(requireContext(), R.string.msg_pet_deleted, Toast.LENGTH_SHORT).show()
+                BuyerDemoData.removePet(pet.id) { removed ->
+                    if (!removed) {
+                        Toast.makeText(requireContext(), R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+                        return@removePet
+                    }
+                    if (isAdded) renderPets()
+                    Toast.makeText(requireContext(), R.string.msg_pet_deleted, Toast.LENGTH_SHORT).show()
+                }
             }
             .setNegativeButton(R.string.action_cancel, null)
             .show()

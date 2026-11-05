@@ -40,7 +40,9 @@ class AdminUsersFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (this::container.isInitialized) render()
+        if (this::container.isInitialized) {
+            ShopUserStore.refresh(requireContext()) { if (isAdded) render() }
+        }
     }
 
     private fun render() {
@@ -151,34 +153,38 @@ class AdminUsersFragment : Fragment() {
                 }
                 if (!valid || role == null) return@setOnClickListener
 
-                val result = if (editing == null) {
-                    ShopUserStore.add(name, email, phone, role, password)
+                val finish: (ShopUserWrite) -> Unit = { result ->
+                    when (result) {
+                        ShopUserWrite.SAVED -> {
+                            val message = if (user == null) R.string.msg_user_added else R.string.msg_user_updated
+                            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                            render()
+                            dialog.dismiss()
+                        }
+                        ShopUserWrite.DUPLICATE_EMAIL -> {
+                            layoutEmail.error = getString(R.string.msg_user_duplicate_email)
+                        }
+                        ShopUserWrite.LAST_ADMIN -> {
+                            layoutRole.error = getString(R.string.msg_user_last_admin)
+                        }
+                        else -> {
+                            Toast.makeText(requireContext(), R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                if (editing == null) {
+                    ShopUserStore.add(requireContext(), name, email, phone, role, password, finish)
                 } else {
                     ShopUserStore.update(
+                        context = requireContext(),
                         id = editing.id,
                         fullName = name,
                         email = email,
                         phone = phone,
                         role = role,
-                        newPassword = password.takeIf { it.isNotEmpty() }
+                        newPassword = password.takeIf { it.isNotEmpty() },
+                        onResult = finish
                     )
-                }
-                when (result) {
-                    ShopUserWrite.SAVED -> {
-                        val message = if (user == null) R.string.msg_user_added else R.string.msg_user_updated
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                        render()
-                        dialog.dismiss()
-                    }
-                    ShopUserWrite.DUPLICATE_EMAIL -> {
-                        layoutEmail.error = getString(R.string.msg_user_duplicate_email)
-                    }
-                    ShopUserWrite.LAST_ADMIN -> {
-                        layoutRole.error = getString(R.string.msg_user_last_admin)
-                    }
-                    ShopUserWrite.NOT_FOUND -> {
-                        Toast.makeText(requireContext(), R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
-                    }
                 }
             }
         }
@@ -196,16 +202,18 @@ class AdminUsersFragment : Fragment() {
             .setTitle(R.string.dialog_delete_user_title)
             .setMessage(getString(R.string.dialog_delete_user_message, user.fullName))
             .setPositiveButton(R.string.action_delete) { _, _ ->
-                when (ShopUserStore.remove(user.id)) {
-                    ShopUserWrite.SAVED -> {
-                        Toast.makeText(requireContext(), R.string.msg_user_deleted, Toast.LENGTH_SHORT).show()
-                        render()
-                    }
-                    ShopUserWrite.LAST_ADMIN -> {
-                        Toast.makeText(requireContext(), R.string.msg_user_last_admin, Toast.LENGTH_SHORT).show()
-                    }
-                    else -> {
-                        Toast.makeText(requireContext(), R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+                ShopUserStore.remove(requireContext(), user.id) { result ->
+                    when (result) {
+                        ShopUserWrite.SAVED -> {
+                            Toast.makeText(requireContext(), R.string.msg_user_deleted, Toast.LENGTH_SHORT).show()
+                            render()
+                        }
+                        ShopUserWrite.LAST_ADMIN -> {
+                            Toast.makeText(requireContext(), R.string.msg_user_last_admin, Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(requireContext(), R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }

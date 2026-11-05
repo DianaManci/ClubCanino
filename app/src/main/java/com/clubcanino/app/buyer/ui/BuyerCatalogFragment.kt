@@ -10,7 +10,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
 import com.clubcanino.app.buyer.data.BuyerDemoData
-import com.clubcanino.app.seller.data.ShopCatalog
+import com.clubcanino.app.seller.data.MarketCatalog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
@@ -71,8 +71,7 @@ class BuyerCatalogFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (this::productsContainer.isInitialized) {
-            ShopCatalog.bind(requireContext())
-            renderProducts()
+            MarketCatalog.refresh(requireContext()) { if (isAdded) renderProducts() }
         }
     }
 
@@ -89,7 +88,7 @@ class BuyerCatalogFragment : Fragment() {
 
     private fun renderProducts() {
         val query = editSearch.text?.toString().orEmpty()
-        val products = ShopCatalog.forBuyer(selectedCategory, query)
+        val products = MarketCatalog.forBuyer(selectedCategory, query)
         productsContainer.removeAllViews()
         emptyView.visibility = if (products.isEmpty()) View.VISIBLE else View.GONE
         val inflater = layoutInflater

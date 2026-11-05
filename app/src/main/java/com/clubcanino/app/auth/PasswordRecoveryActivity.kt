@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.clubcanino.app.R
+import com.clubcanino.app.admin.data.ShopUserStore
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -58,6 +59,14 @@ class PasswordRecoveryActivity : AppCompatActivity() {
             return
         }
 
-        Toast.makeText(this, R.string.msg_recovery_pending, Toast.LENGTH_LONG).show()
+        if (!FirebaseGate.isReady(this)) {
+            Toast.makeText(this, R.string.msg_firebase_missing, Toast.LENGTH_LONG).show()
+            return
+        }
+        ShopUserStore.sendPasswordReset(this, email) { sent ->
+            val message = if (sent) R.string.msg_recovery_sent else R.string.msg_error_generic
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            if (sent) finish()
+        }
     }
 }

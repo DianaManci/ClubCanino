@@ -1,15 +1,18 @@
 package com.clubcanino.app.admin.data
 
 import android.content.Context
-import com.clubcanino.app.auth.PasswordHasher
-import org.json.JSONArray
-import org.json.JSONObject
+import com.clubcanino.app.auth.FirebaseGate
+import com.clubcanino.app.buyer.data.BuyerSession
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.firestore.SetOptions
 
 enum class ShopUserWrite {
     SAVED,
     DUPLICATE_EMAIL,
     LAST_ADMIN,
-    NOT_FOUND
+    NOT_FOUND,
+    NOT_CONFIGURED,
+    FAILED
 }
 
 object ShopUserStore {
@@ -18,252 +21,277 @@ object ShopUserStore {
     const val ROLE_SELLER = "Vendedor"
     const val ROLE_ADMIN = "Administrador"
 
-    /**
-     * Initial password for the demo accounts and for users created by the admin.
-     * Only its salted hash is stored.
-     */
-    const val INITIAL_PASSWORD = "demo123"
-
     val roles = listOf(ROLE_BUYER, ROLE_SELLER, ROLE_ADMIN)
 
     private val usersInternal = mutableListOf<ShopUser>()
-    private val passwords = mutableMapOf<String, PasswordHasher.StoredPassword>()
-    private var loaded = false
     private var appContext: Context? = null
 
-    fun bind(context: Context) {
+    fun bind(context: Context, onReady: (() -> Unit)? = null) {
         appContext = context.applicationContext
-        ensureLoaded()
+        loadCurrent(context, onReady)
     }
 
-    fun users(): List<ShopUser> {
-        ensureLoaded()
-        return usersInternal.toList()
-    }
+    fun users(): List<ShopUser> = usersInternal.toList()
 
-    fun count(): Int {
-        ensureLoaded()
-        return usersInternal.size
-    }
+    fun count(): Int = usersInternal.size
 
     fun canonicalRole(raw: String): String? =
         roles.find { it.equals(raw.trim(), ignoreCase = true) }
 
     fun findByEmail(email: String): ShopUser? {
-        ensureLoaded()
         val key = email.trim()
         if (key.isEmpty()) return null
         return usersInternal.find { it.email.equals(key, ignoreCase = true) }
     }
 
-    fun authenticate(email: String, password: String): ShopUser? {
-        ensureLoaded()
-        val user = usersInternal.find { it.email.equals(email.trim(), ignoreCase = true) } ?: return null
-        val stored = passwords[user.id] ?: return null
-        return if (PasswordHasher.matches(password, stored.salt, stored.hash)) user else null
+    fun loadCurrent(context: Context, onReady: (() -> Unit)? = null) {
+        appContext = context.applicationContext
+        val db = FirebaseGate.db(context)
+        val uid = FirebaseGate.auth(context)?.currentUser?.uid
+        if (db == null || uid.isNullOrBlank()) {
+            onReady?.invoke()
+            return
+        }
+        db.collection(USERS).document(uid).get()
+            .addOnSuccessListener { snapshot ->
+                snapshot.toUser(uid)?.let { remember(it) }
+                onReady?.invoke()
+            }
+            .addOnFailureListener { onReady?.invoke() }
     }
 
-    fun register(fullName: String, email: String, password: String): ShopUserWrite {
-        return create(
-            fullName = fullName,
-            email = email,
-            phone = DEFAULT_PHONE,
-            role = ROLE_BUYER,
-            password = password
-        )
+    fun refresh(context: Context, onReady: () -> Unit) {
+        appContext = context.applicationContext
+        val db = FirebaseGate.db(context)
+        if (db == null) {
+            onReady()
+            return
+        }
+        db.collection(USERS).get()
+            .addOnSuccessListener { query ->
+                usersInternal.clear()
+                query.documents.forEach { doc ->
+                    doc.toUser(doc.id)?.let { usersInternal.add(it) }
+                }
+                onReady()
+            }
+            .addOnFailureListener { onReady() }
     }
 
-    fun add(fullName: String, email: String, phone: String, role: String): ShopUserWrite {
-        return add(fullName, email, phone, role, INITIAL_PASSWORD)
+    fun signIn(
+        context: Context,
+        email: String,
+        password: String,
+        onResult: (ShopUser?) -> Unit
+    ) {
+        val auth = FirebaseGate.auth(context) ?: return onResult(null)
+        val db = FirebaseGate.db(context) ?: return onResult(null)
+        auth.signInWithEmailAndPassword(email.trim(), password)
+            .addOnSuccessListener { result ->
+                val uid = result.user?.uid
+                if (uid.isNullOrBlank()) {
+                    onResult(null)
+                    return@addOnSuccessListener
+                }
+                db.collection(USERS).document(uid).get()
+                    .addOnSuccessListener { snapshot ->
+                        val user = snapshot.toUser(uid)
+                        if (user == null) {
+                            onResult(null)
+                        } else {
+                            remember(user)
+                            onResult(user)
+                        }
+                    }
+                    .addOnFailureListener { onResult(null) }
+            }
+            .addOnFailureListener { onResult(null) }
+    }
+
+    fun register(
+        context: Context,
+        fullName: String,
+        email: String,
+        password: String,
+        role: String,
+        storeName: String,
+        onResult: (ShopUserWrite) -> Unit
+    ) {
+        val safeRole = if (role == ROLE_SELLER) ROLE_SELLER else ROLE_BUYER
+        val auth = FirebaseGate.auth(context) ?: return onResult(ShopUserWrite.NOT_CONFIGURED)
+        auth.createUserWithEmailAndPassword(email.trim(), password)
+            .addOnSuccessListener { result ->
+                val uid = result.user?.uid
+                if (uid.isNullOrBlank()) {
+                    onResult(ShopUserWrite.FAILED)
+                    return@addOnSuccessListener
+                }
+                writeUser(
+                    context = context,
+                    user = ShopUser(
+                        id = uid,
+                        fullName = fullName.trim(),
+                        email = email.trim(),
+                        phone = DEFAULT_PHONE,
+                        role = safeRole,
+                        storeName = if (safeRole == ROLE_SELLER) storeName.trim() else ""
+                    ),
+                    onResult = onResult
+                )
+            }
+            .addOnFailureListener { error ->
+                onResult(
+                    if (error is FirebaseAuthUserCollisionException) {
+                        ShopUserWrite.DUPLICATE_EMAIL
+                    } else {
+                        ShopUserWrite.FAILED
+                    }
+                )
+            }
+    }
+
+    fun sendPasswordReset(context: Context, email: String, onResult: (Boolean) -> Unit) {
+        val auth = FirebaseGate.auth(context) ?: return onResult(false)
+        auth.sendPasswordResetEmail(email.trim())
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
     }
 
     fun add(
+        context: Context,
         fullName: String,
         email: String,
         phone: String,
         role: String,
-        password: String
-    ): ShopUserWrite {
-        return create(fullName, email, phone, role, password)
+        password: String,
+        onResult: (ShopUserWrite) -> Unit
+    ) {
+        val auth = FirebaseGate.accountAuth(context) ?: return onResult(ShopUserWrite.NOT_CONFIGURED)
+        auth.createUserWithEmailAndPassword(email.trim(), password)
+            .addOnSuccessListener { result ->
+                val uid = result.user?.uid
+                auth.signOut()
+                if (uid.isNullOrBlank()) {
+                    onResult(ShopUserWrite.FAILED)
+                    return@addOnSuccessListener
+                }
+                writeUser(
+                    context,
+                    ShopUser(uid, fullName.trim(), email.trim(), phone.trim(), role, ""),
+                    onResult
+                )
+            }
+            .addOnFailureListener { error ->
+                auth.signOut()
+                onResult(
+                    if (error is FirebaseAuthUserCollisionException) {
+                        ShopUserWrite.DUPLICATE_EMAIL
+                    } else {
+                        ShopUserWrite.FAILED
+                    }
+                )
+            }
     }
 
     fun update(
+        context: Context,
         id: String,
         fullName: String,
         email: String,
         phone: String,
         role: String,
-        newPassword: String? = null
-    ): ShopUserWrite {
-        ensureLoaded()
-        val index = usersInternal.indexOfFirst { it.id == id }
-        if (index < 0) return ShopUserWrite.NOT_FOUND
-        if (emailTaken(email, ignoreId = id)) return ShopUserWrite.DUPLICATE_EMAIL
-        val current = usersInternal[index]
-        if (removesLastAdmin(current, role)) return ShopUserWrite.LAST_ADMIN
-        usersInternal[index] = current.copy(
-            fullName = fullName,
-            email = email.trim(),
-            phone = phone,
-            role = role
-        )
-        if (!newPassword.isNullOrEmpty()) {
-            passwords[id] = PasswordHasher.create(newPassword)
+        newPassword: String? = null,
+        onResult: (ShopUserWrite) -> Unit
+    ) {
+        val current = usersInternal.find { it.id == id } ?: return onResult(ShopUserWrite.NOT_FOUND)
+        if (emailTaken(email, id)) return onResult(ShopUserWrite.DUPLICATE_EMAIL)
+        if (current.role == ROLE_ADMIN && role != ROLE_ADMIN && adminCount() <= 1) {
+            return onResult(ShopUserWrite.LAST_ADMIN)
         }
-        persist()
-        return ShopUserWrite.SAVED
-    }
-
-    fun remove(id: String): ShopUserWrite {
-        ensureLoaded()
-        val user = usersInternal.find { it.id == id } ?: return ShopUserWrite.NOT_FOUND
-        if (user.role == ROLE_ADMIN && adminCount() <= 1) return ShopUserWrite.LAST_ADMIN
-        usersInternal.removeAll { it.id == id }
-        passwords.remove(id)
-        persist()
-        return ShopUserWrite.SAVED
-    }
-
-    private fun create(
-        fullName: String,
-        email: String,
-        phone: String,
-        role: String,
-        password: String
-    ): ShopUserWrite {
-        ensureLoaded()
-        if (emailTaken(email, ignoreId = null)) return ShopUserWrite.DUPLICATE_EMAIL
-        val user = ShopUser(
-            id = "u_${System.currentTimeMillis()}",
-            fullName = fullName,
+        val updated = current.copy(
+            fullName = fullName.trim(),
             email = email.trim(),
-            phone = phone,
+            phone = phone.trim(),
             role = role
         )
-        usersInternal.add(user)
-        passwords[user.id] = PasswordHasher.create(password)
-        persist()
-        return ShopUserWrite.SAVED
+        writeUser(context, updated) { result ->
+            if (result == ShopUserWrite.SAVED && !newPassword.isNullOrBlank()) {
+                FirebaseGate.auth(context)?.sendPasswordResetEmail(updated.email)
+            }
+            onResult(result)
+        }
     }
 
-    private fun ensureLoaded() {
-        if (loaded) return
-        val context = appContext ?: return
-        loaded = true
-        val raw = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getString(KEY_USERS, null)
-        if (raw != null) {
-            read(raw)
-            if (usersInternal.isEmpty()) {
-                seedDemoUsers()
-                persist()
+    fun remove(context: Context, id: String, onResult: (ShopUserWrite) -> Unit) {
+        val user = usersInternal.find { it.id == id } ?: return onResult(ShopUserWrite.NOT_FOUND)
+        if (user.role == ROLE_ADMIN && adminCount() <= 1) return onResult(ShopUserWrite.LAST_ADMIN)
+        val db = FirebaseGate.db(context) ?: return onResult(ShopUserWrite.NOT_CONFIGURED)
+        db.collection(USERS).document(id).delete()
+            .addOnSuccessListener {
+                usersInternal.removeAll { it.id == id }
+                onResult(ShopUserWrite.SAVED)
             }
+            .addOnFailureListener { onResult(ShopUserWrite.FAILED) }
+    }
+
+    fun saveStoreProfile(context: Context, fullName: String, phone: String, storeName: String) {
+        val email = BuyerSession.currentEmail(context) ?: return
+        val current = findByEmail(email) ?: return
+        val updated = current.copy(
+            fullName = fullName.trim(),
+            phone = phone.trim(),
+            storeName = storeName.trim()
+        )
+        writeUser(context, updated) {}
+    }
+
+    private fun writeUser(context: Context, user: ShopUser, onResult: (ShopUserWrite) -> Unit) {
+        val db = FirebaseGate.db(context) ?: return onResult(ShopUserWrite.NOT_CONFIGURED)
+        val data = mapOf(
+            "fullName" to user.fullName,
+            "email" to BuyerSession.normalizeEmail(user.email),
+            "phone" to user.phone,
+            "role" to user.role,
+            "storeName" to user.storeName
+        )
+        db.collection(USERS).document(user.id).set(data, SetOptions.merge())
+            .addOnSuccessListener {
+                remember(user.copy(email = BuyerSession.normalizeEmail(user.email)))
+                onResult(ShopUserWrite.SAVED)
+            }
+            .addOnFailureListener { onResult(ShopUserWrite.FAILED) }
+    }
+
+    private fun remember(user: ShopUser) {
+        val index = usersInternal.indexOfFirst {
+            it.id == user.id || it.email.equals(user.email, ignoreCase = true)
+        }
+        if (index >= 0) {
+            usersInternal[index] = user
         } else {
-            seedDemoUsers()
-            persist()
+            usersInternal.add(user)
         }
     }
 
-    private fun seedDemoUsers() {
-        usersInternal.clear()
-        passwords.clear()
-        listOf(
-            ShopUser("u1", "Ana Gómez", "ana.gomez@clubcanino.demo", "+57 300 555 1212", ROLE_BUYER),
-            ShopUser("u2", "Luis Herrera", "luis.herrera@clubcanino.demo", "+57 301 222 3344", ROLE_BUYER),
-            ShopUser("u3", "Camila Ruiz", "camila.ruiz@clubcanino.demo", "+57 310 444 8899", ROLE_SELLER),
-            ShopUser("u4", "Diego Salas", "diego.salas@clubcanino.demo", "+57 315 777 1010", ROLE_SELLER),
-            ShopUser("u5", "Valeria Ortiz", "valeria.ortiz@clubcanino.demo", "+57 320 888 4545", ROLE_ADMIN)
-        ).forEach { user ->
-            if (usersInternal.none { it.id == user.id || it.email.equals(user.email, true) }) {
-                usersInternal.add(user)
-                passwords[user.id] = PasswordHasher.create(INITIAL_PASSWORD)
-            }
-        }
-    }
-
-    private fun persist() {
-        val context = appContext ?: return
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit()
-            .putString(KEY_USERS, write())
-            .commit()
-    }
-
-    private fun write(): String {
-        val array = JSONArray()
-        usersInternal.forEach { user ->
-            val password = passwords[user.id] ?: PasswordHasher.create(INITIAL_PASSWORD).also {
-                passwords[user.id] = it
-            }
-            array.put(
-                JSONObject().apply {
-                    put(JSON_ID, user.id)
-                    put(JSON_NAME, user.fullName)
-                    put(JSON_EMAIL, user.email)
-                    put(JSON_PHONE, user.phone)
-                    put(JSON_ROLE, user.role)
-                    put(JSON_SALT, password.salt)
-                    put(JSON_HASH, password.hash)
-                }
-            )
-        }
-        return array.toString()
-    }
-
-    private fun read(raw: String) {
-        usersInternal.clear()
-        passwords.clear()
-        try {
-            val array = JSONArray(raw)
-            for (index in 0 until array.length()) {
-                val obj = array.optJSONObject(index) ?: continue
-                val id = obj.optString(JSON_ID).trim()
-                val email = obj.optString(JSON_EMAIL).trim()
-                val name = obj.optString(JSON_NAME).trim()
-                val role = canonicalRole(obj.optString(JSON_ROLE)).orEmpty()
-                val salt = obj.optString(JSON_SALT)
-                val hash = obj.optString(JSON_HASH)
-                if (id.isEmpty() || email.isEmpty() || name.isEmpty() || role.isEmpty()) continue
-                if (usersInternal.any { it.id == id || it.email.equals(email, true) }) continue
-                if (salt.isEmpty() || hash.isEmpty()) continue
-                usersInternal.add(
-                    ShopUser(
-                        id = id,
-                        fullName = name,
-                        email = email,
-                        phone = obj.optString(JSON_PHONE),
-                        role = role
-                    )
-                )
-                passwords[id] = PasswordHasher.StoredPassword(salt, hash)
-            }
-        } catch (_: Exception) {
-            usersInternal.clear()
-            passwords.clear()
-        }
-    }
+    private fun emailTaken(email: String, ignoreId: String): Boolean =
+        usersInternal.any { it.id != ignoreId && it.email.equals(email.trim(), ignoreCase = true) }
 
     private fun adminCount(): Int = usersInternal.count { it.role == ROLE_ADMIN }
 
-    private fun removesLastAdmin(current: ShopUser, newRole: String): Boolean {
-        return current.role == ROLE_ADMIN && newRole != ROLE_ADMIN && adminCount() <= 1
+    private fun com.google.firebase.firestore.DocumentSnapshot.toUser(id: String): ShopUser? {
+        if (!exists()) return null
+        val email = getString("email").orEmpty().trim()
+        if (email.isEmpty()) return null
+        return ShopUser(
+            id = id,
+            fullName = getString("fullName").orEmpty().ifBlank { email },
+            email = email,
+            phone = getString("phone").orEmpty(),
+            role = getString("role").orEmpty().ifBlank { ROLE_BUYER },
+            storeName = getString("storeName").orEmpty()
+        )
     }
 
-    private fun emailTaken(email: String, ignoreId: String?): Boolean {
-        val normalized = email.trim().lowercase()
-        return usersInternal.any { user ->
-            user.id != ignoreId && user.email.trim().lowercase() == normalized
-        }
-    }
-
-    private const val PREFS_NAME = "club_canino_users"
-    private const val KEY_USERS = "shop_users"
+    private const val USERS = "users"
     private const val DEFAULT_PHONE = "Sin teléfono"
-    private const val JSON_ID = "id"
-    private const val JSON_NAME = "fullName"
-    private const val JSON_EMAIL = "email"
-    private const val JSON_PHONE = "phone"
-    private const val JSON_ROLE = "role"
-    private const val JSON_SALT = "passwordSalt"
-    private const val JSON_HASH = "passwordHash"
 }

@@ -1,5 +1,6 @@
 package com.clubcanino.app.seller.ui
 
+import android.net.Uri
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -7,7 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
+import com.clubcanino.app.admin.data.ShopUserStore
+import com.clubcanino.app.auth.FirebaseGate
+import com.clubcanino.app.buyer.data.BuyerSession
 import com.clubcanino.app.buyer.ui.MoneyFormat
+import com.clubcanino.app.seller.data.MarketCatalog
 import com.clubcanino.app.seller.data.ShopCatalog
 import com.clubcanino.app.seller.data.ShopInput
 import com.google.android.material.checkbox.MaterialCheckBox
@@ -17,13 +22,30 @@ import com.google.android.material.textfield.TextInputLayout
 
 object ShopProductEditor {
 
+    private var photoCallback: ((Uri) -> Unit)? = null
+
+    fun deliverPhoto(uri: Uri?) {
+        uri?.let { photoCallback?.invoke(it) }
+    }
+
+    private fun sellerId(fragment: Fragment): String? {
+        val role = BuyerSession.currentRole(fragment.requireContext())
+        if (role != ShopUserStore.ROLE_SELLER) return null
+        return FirebaseGate.auth(fragment.requireContext())?.currentUser?.uid
+    }
+
     fun render(
         fragment: Fragment,
         container: LinearLayout,
         emptyView: TextView,
         query: String
     ) {
-        val products = ShopCatalog.search(query)
+        val ownerId = sellerId(fragment)
+        val products = if (ownerId == null) {
+            ShopCatalog.search(query)
+        } else {
+            MarketCatalog.search(ownerId, query)
+        }
         container.removeAllViews()
         emptyView.visibility = if (products.isEmpty()) View.VISIBLE else View.GONE
         val inflater = fragment.layoutInflater
@@ -55,7 +77,11 @@ object ShopProductEditor {
 
     fun showForm(fragment: Fragment, productId: String?, onSaved: () -> Unit) {
         val context = fragment.requireContext()
-        val product = productId?.let { ShopCatalog.productById(it) }
+        val cloud = sellerId(fragment) != null
+        val product = productId?.let { id ->
+            if (cloud) MarketCatalog.shopProduct(id) else ShopCatalog.productById(id)
+        }
+        var selectedPhoto: Uri? = null
         val form = fragment.layoutInflater.inflate(R.layout.dialog_product_form, null, false)
 
         val layoutName = form.findViewById<TextInputLayout>(R.id.layoutProductName)
@@ -70,6 +96,15 @@ object ShopProductEditor {
         val editPetType = form.findViewById<TextInputEditText>(R.id.editProductPetType)
         val editStock = form.findViewById<TextInputEditText>(R.id.editProductStock)
         val checkActive = form.findViewById<MaterialCheckBox>(R.id.checkProductActive)
+        val buttonPhoto = form.findViewById<MaterialButton>(R.id.buttonPickPhoto)
+        buttonPhoto.visibility = if (cloud) View.VISIBLE else View.GONE
+        buttonPhoto.setOnClickListener {
+            photoCallback = { uri ->
+                selectedPhoto = uri
+                buttonPhoto.text = fragment.getString(R.string.msg_photo_selected)
+            }
+            (fragment as? SellerProductsFragment)?.launchPhotoPick()
+        }
 
         if (product != null) {
             editName.setText(product.name)
@@ -158,6 +193,37 @@ object ShopProductEditor {
                 if (!valid || price == null || category == null || petType == null || stock == null) {
                     return@setOnClickListener
                 }
+                if (cloud && product == null && selectedPhoto == null) {
+                    Toast.makeText(context, R.string.msg_photo_required, Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (cloud) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+                    MarketCatalog.save(
+                        context = context,
+                        existingId = product?.id,
+                        name = name,
+                        description = description,
+                        price = price,
+                        category = category,
+                        petType = petType,
+                        stock = stock,
+                        active = checkActive.isChecked,
+                        photo = selectedPhoto
+                    ) { saved ->
+                        if (!saved) {
+                            Toast.makeText(context, R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
+                            return@save
+                        }
+                        val message = if (product == null) R.string.msg_product_added else R.string.msg_product_updated
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        onSaved()
+                        dialog.dismiss()
+                    }
+                    return@setOnClickListener
+                }
 
                 if (product == null) {
                     ShopCatalog.add(
@@ -191,7 +257,7 @@ object ShopProductEditor {
     }
 
     fun showDetail(fragment: Fragment, productId: String) {
-        val product = ShopCatalog.productById(productId) ?: return
+        val product = MarketCatalog.shopProduct(productId) ?: ShopCatalog.productById(productId) ?: return
         val description = product.description.ifBlank {
             fragment.getString(R.string.shop_product_no_description)
         }
@@ -216,11 +282,23 @@ object ShopProductEditor {
     }
 
     fun confirmDelete(fragment: Fragment, productId: String, onDeleted: () -> Unit) {
-        val product = ShopCatalog.productById(productId) ?: return
+        val product = MarketCatalog.shopProduct(productId) ?: ShopCatalog.productById(productId) ?: return
         AlertDialog.Builder(fragment.requireContext())
             .setTitle(R.string.dialog_delete_product_title)
             .setMessage(fragment.getString(R.string.dialog_delete_product_message, product.name))
             .setPositiveButton(R.string.action_delete) { _, _ ->
+                if (sellerId(fragment) != null) {
+                    MarketCatalog.remove(fragment.requireContext(), product.id) { removed ->
+                        if (!removed) return@remove
+                        Toast.makeText(
+                            fragment.requireContext(),
+                            R.string.msg_product_deleted,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        onDeleted()
+                    }
+                    return@setPositiveButton
+                }
                 if (ShopCatalog.remove(product.id)) {
                     Toast.makeText(
                         fragment.requireContext(),

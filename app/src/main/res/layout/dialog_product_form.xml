@@ -44,6 +44,15 @@
                 android:minLines="2" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonPickPhoto"
+            style="@style/Widget.ClubCanino.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:text="@string/action_pick_photo"
+            android:visibility="gone" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutProductPrice"
             style="@style/Widget.ClubCanino.TextInputLayout"

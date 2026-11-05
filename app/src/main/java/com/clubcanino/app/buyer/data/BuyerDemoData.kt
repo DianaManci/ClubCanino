@@ -3,6 +3,7 @@ package com.clubcanino.app.buyer.data
 import android.content.Context
 import com.clubcanino.app.R
 import com.clubcanino.app.admin.data.ShopUserStore
+import com.clubcanino.app.auth.FirebaseGate
 
 object BuyerDemoData {
 
@@ -18,6 +19,7 @@ object BuyerDemoData {
 
     private var appContext: Context? = null
     private var loadedBuyerId: String? = null
+    private var petsReady = false
     private val petsInternal = mutableListOf<Pet>()
 
     fun profile(context: Context): BuyerProfile {
@@ -36,42 +38,80 @@ object BuyerDemoData {
     }
 
     /**
-     * Loads pets for the active buyer from local storage.
-     * Seeds Luna and Michi only when that buyer has no saved list yet.
+     * Loads only the pets saved for the signed-in user. A new account starts empty.
      */
-    fun ensurePetsLoaded(context: Context) {
+    fun ensurePetsLoaded(context: Context, onReady: (() -> Unit)? = null) {
         val app = context.applicationContext
         appContext = app
-        val buyerId = BuyerSession.currentBuyerId(app)
-        if (loadedBuyerId == buyerId) return
-
-        loadedBuyerId = buyerId
-        petsInternal.clear()
-
-        val store = PetLocalStore(app)
-        if (store.hasSavedPets(buyerId)) {
-            petsInternal.addAll(store.load(buyerId))
-        } else {
-            petsInternal.addAll(defaultSeedPets())
-            store.save(buyerId, petsInternal.toList())
+        val uid = FirebaseGate.auth(app)?.currentUser?.uid.orEmpty()
+        val db = FirebaseGate.db(app)
+        if (uid.isEmpty() || db == null) {
+            loadedBuyerId = null
+            petsReady = false
+            petsInternal.clear()
+            onReady?.invoke()
+            return
         }
+        if (loadedBuyerId == uid && petsReady) {
+            onReady?.invoke()
+            return
+        }
+        loadedBuyerId = uid
+        petsReady = false
+        petsInternal.clear()
+        db.collection("users").document(uid).collection("pets").get()
+            .addOnSuccessListener { query ->
+                if (loadedBuyerId != uid) return@addOnSuccessListener
+                petsInternal.clear()
+                query.documents.forEach { doc ->
+                    val name = doc.getString("name").orEmpty().trim()
+                    if (name.isEmpty()) return@forEach
+                    petsInternal.add(
+                        Pet(
+                            id = doc.id,
+                            name = name,
+                            species = doc.getString("species").orEmpty().ifBlank { "Mascota" },
+                            breed = doc.getString("breed").orEmpty().ifBlank { "Sin raza" },
+                            ageLabel = doc.getString("ageLabel").orEmpty().ifBlank { "Edad no indicada" }
+                        )
+                    )
+                }
+                petsReady = true
+                onReady?.invoke()
+            }
+            .addOnFailureListener { onReady?.invoke() }
     }
 
     fun pets(): List<Pet> = petsInternal.toList()
 
     fun petById(id: String): Pet? = petsInternal.find { it.id == id }
 
-    fun addPet(name: String, species: String, breed: String, ageLabel: String): Pet {
-        val pet = Pet(
-            id = "pet_${System.currentTimeMillis()}",
-            name = name,
-            species = species,
-            breed = breed,
-            ageLabel = ageLabel
+    fun addPet(
+        name: String,
+        species: String,
+        breed: String,
+        ageLabel: String,
+        onDone: (Boolean) -> Unit = {}
+    ) {
+        val context = appContext
+        val uid = loadedBuyerId
+        val db = context?.let { FirebaseGate.db(it) }
+        if (context == null || uid.isNullOrBlank() || db == null) {
+            onDone(false)
+            return
+        }
+        val data = mapOf(
+            "name" to name,
+            "species" to species,
+            "breed" to breed,
+            "ageLabel" to ageLabel
         )
-        petsInternal.add(pet)
-        persistPets()
-        return pet
+        db.collection("users").document(uid).collection("pets").add(data)
+            .addOnSuccessListener { ref ->
+                petsInternal.add(Pet(ref.id, name, species, breed, ageLabel))
+                onDone(true)
+            }
+            .addOnFailureListener { onDone(false) }
     }
 
     fun updatePet(
@@ -79,37 +119,46 @@ object BuyerDemoData {
         name: String,
         species: String,
         breed: String,
-        ageLabel: String
-    ): Boolean {
+        ageLabel: String,
+        onDone: (Boolean) -> Unit = {}
+    ) {
+        val context = appContext
+        val uid = loadedBuyerId
+        val db = context?.let { FirebaseGate.db(it) }
         val index = petsInternal.indexOfFirst { it.id == id }
-        if (index < 0) return false
-        petsInternal[index] = Pet(
-            id = id,
-            name = name,
-            species = species,
-            breed = breed,
-            ageLabel = ageLabel
+        if (context == null || uid.isNullOrBlank() || db == null || index < 0) {
+            onDone(false)
+            return
+        }
+        val data = mapOf(
+            "name" to name,
+            "species" to species,
+            "breed" to breed,
+            "ageLabel" to ageLabel
         )
-        persistPets()
-        return true
+        db.collection("users").document(uid).collection("pets").document(id).set(data)
+            .addOnSuccessListener {
+                petsInternal[index] = Pet(id, name, species, breed, ageLabel)
+                onDone(true)
+            }
+            .addOnFailureListener { onDone(false) }
     }
 
-    fun removePet(id: String): Boolean {
-        val removed = petsInternal.removeAll { it.id == id }
-        if (removed) persistPets()
-        return removed
+    fun removePet(id: String, onDone: (Boolean) -> Unit = {}) {
+        val context = appContext
+        val uid = loadedBuyerId
+        val db = context?.let { FirebaseGate.db(it) }
+        if (context == null || uid.isNullOrBlank() || db == null) {
+            onDone(false)
+            return
+        }
+        db.collection("users").document(uid).collection("pets").document(id).delete()
+            .addOnSuccessListener {
+                petsInternal.removeAll { it.id == id }
+                onDone(true)
+            }
+            .addOnFailureListener { onDone(false) }
     }
-
-    private fun persistPets() {
-        val context = appContext ?: return
-        val buyerId = loadedBuyerId ?: BuyerSession.currentBuyerId(context)
-        PetLocalStore(context).save(buyerId, petsInternal.toList())
-    }
-
-    private fun defaultSeedPets(): List<Pet> = listOf(
-        Pet("pet1", "Luna", "Perro", "Labrador", "3 años"),
-        Pet("pet2", "Michi", "Gato", "Mestizo", "2 años")
-    )
 
     val orders = listOf(
         OrderSummary("ORD-1042", "28 oct 2026", "Entregado", 129900.0, 3),

@@ -2,26 +2,58 @@ package com.clubcanino.app.buyer.data
 
 import android.content.Context
 import com.clubcanino.app.R
-import com.clubcanino.app.seller.data.ShopCatalog
-import org.json.JSONArray
-import org.json.JSONObject
+import com.clubcanino.app.auth.FirebaseGate
+import com.google.firebase.firestore.SetOptions
 
 /**
- * One cart per buyer email. The list is stored on the device and is not cleared
- * when another buyer signs in.
+ * One cart per signed-in customer. Items from several stores stay in the same cart.
  */
 object CartStore {
 
     private val carts = mutableMapOf<String, LinkedHashMap<String, CartItem>>()
     private val listeners = mutableListOf<() -> Unit>()
-    private var activeEmail: String = ""
-    private var loaded = false
+    private var activeUid: String = ""
     private var appContext: Context? = null
 
     fun bind(context: Context) {
         appContext = context.applicationContext
-        ensureLoaded()
-        refreshOwner(notify = true)
+        val uid = FirebaseGate.auth(context)?.currentUser?.uid.orEmpty()
+        if (uid == activeUid && uid.isNotEmpty() && carts.containsKey(uid)) {
+            return
+        }
+        activeUid = uid
+        if (uid.isEmpty()) {
+            notifyListeners()
+            return
+        }
+        carts.getOrPut(uid) { linkedMapOf() }
+        val db = FirebaseGate.db(context) ?: return
+        db.collection(CARTS).document(uid).collection(LINES).get()
+            .addOnSuccessListener { query ->
+                if (uid != activeUid) return@addOnSuccessListener
+                val items = linkedMapOf<String, CartItem>()
+                query.documents.forEach { doc ->
+                    val name = doc.getString("name").orEmpty().trim()
+                    val quantity = (doc.getLong("quantity") ?: 0L).toInt()
+                    if (name.isEmpty() || quantity <= 0) return@forEach
+                    val product = Product(
+                        id = doc.id,
+                        name = name,
+                        description = "",
+                        price = doc.getDouble("price") ?: 0.0,
+                        category = "",
+                        petType = "",
+                        imageColorRes = R.color.green_container,
+                        imageIconRes = R.drawable.ic_pet_dog,
+                        sellerId = doc.getString("sellerId").orEmpty(),
+                        storeName = doc.getString("storeName").orEmpty(),
+                        photoUrl = doc.getString("photoUrl").orEmpty()
+                    )
+                    items[doc.id] = CartItem(product, quantity)
+                }
+                carts[uid] = items
+                notifyListeners()
+            }
     }
 
     fun items(): List<CartItem> = activeItems().values.toList()
@@ -30,9 +62,15 @@ object CartStore {
 
     fun subtotal(): Double = activeItems().values.sumOf { it.lineTotal }
 
+    fun totalsByStore(): List<Pair<String, Double>> {
+        return activeItems().values
+            .groupBy { it.product.storeName.ifBlank { it.product.sellerId.ifBlank { "Tienda" } } }
+            .map { (store, lines) -> store to lines.sumOf { it.lineTotal } }
+    }
+
     fun add(product: Product, quantity: Int = 1) {
         val items = activeItems()
-        if (activeEmail.isEmpty()) return
+        if (activeUid.isEmpty()) return
         val safeQty = quantity.coerceAtLeast(1)
         val existing = items[product.id]
         if (existing == null) {
@@ -40,37 +78,39 @@ object CartStore {
         } else {
             existing.quantity += safeQty
         }
-        persist()
+        persist(product.id)
         notifyListeners()
     }
 
     fun setQuantity(productId: String, quantity: Int) {
         val items = activeItems()
-        if (activeEmail.isEmpty()) return
+        if (activeUid.isEmpty()) return
         val item = items[productId] ?: return
         if (quantity <= 0) {
             items.remove(productId)
+            delete(productId)
         } else {
             item.quantity = quantity
+            persist(productId)
         }
-        persist()
         notifyListeners()
     }
 
     fun remove(productId: String) {
         val items = activeItems()
-        if (activeEmail.isEmpty()) return
+        if (activeUid.isEmpty()) return
         if (items.remove(productId) == null) return
-        persist()
+        delete(productId)
         notifyListeners()
     }
 
     fun clear() {
         val items = activeItems()
-        if (activeEmail.isEmpty()) return
+        if (activeUid.isEmpty()) return
+        val ids = items.keys.toList()
         val hadItems = items.isNotEmpty()
         items.clear()
-        persist()
+        ids.forEach { delete(it) }
         if (hadItems) notifyListeners()
     }
 
@@ -83,110 +123,32 @@ object CartStore {
     }
 
     private fun activeItems(): LinkedHashMap<String, CartItem> {
-        refreshOwner(notify = false)
-        if (activeEmail.isEmpty()) return NO_OWNER
-        return carts.getOrPut(activeEmail) { linkedMapOf() }
+        if (activeUid.isEmpty()) return NO_OWNER
+        return carts.getOrPut(activeUid) { linkedMapOf() }
     }
 
-    private fun refreshOwner(notify: Boolean) {
-        ensureLoaded()
+    private fun persist(productId: String) {
         val context = appContext ?: return
-        val email = BuyerSession.currentEmail(context)?.let(BuyerSession::normalizeEmail).orEmpty()
-        if (email == activeEmail) return
-        activeEmail = email
-        if (email.isNotEmpty()) {
-            carts.getOrPut(email) { linkedMapOf() }
-        }
-        if (notify) notifyListeners()
-    }
-
-    private fun ensureLoaded() {
-        if (loaded) return
-        val context = appContext ?: return
-        loaded = true
-        val raw = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getString(KEY_CARTS, null) ?: return
-        read(raw)
-    }
-
-    private fun persist() {
-        val context = appContext ?: return
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit()
-            .putString(KEY_CARTS, write())
-            .commit()
-    }
-
-    private fun write(): String {
-        val root = JSONObject()
-        carts.forEach { (email, items) ->
-            if (email.isEmpty()) return@forEach
-            if (items.isEmpty() && email != activeEmail) return@forEach
-            val array = JSONArray()
-            items.values.forEach { item ->
-                array.put(
-                    JSONObject().apply {
-                        put(JSON_ID, item.product.id)
-                        put(JSON_NAME, item.product.name)
-                        put(JSON_PRICE, item.product.price)
-                        put(JSON_QUANTITY, item.quantity)
-                    }
-                )
-            }
-            root.put(email, array)
-        }
-        return root.toString()
-    }
-
-    private fun read(raw: String) {
-        carts.clear()
-        try {
-            val root = JSONObject(raw)
-            val keys = root.keys()
-            while (keys.hasNext()) {
-                val rawKey = keys.next()
-                val email = BuyerSession.normalizeEmail(rawKey)
-                val array = root.optJSONArray(rawKey) ?: continue
-                if (email.isEmpty() || carts.containsKey(email)) continue
-                val items = linkedMapOf<String, CartItem>()
-                for (index in 0 until array.length()) {
-                    val obj = array.optJSONObject(index) ?: continue
-                    val id = obj.optString(JSON_ID).trim()
-                    val name = obj.optString(JSON_NAME).trim()
-                    val quantity = obj.optInt(JSON_QUANTITY, 0)
-                    if (id.isEmpty() || name.isEmpty() || quantity <= 0) continue
-                    if (!obj.has(JSON_PRICE)) continue
-                    val price = obj.optDouble(JSON_PRICE, 0.0)
-                    val existing = items[id]
-                    if (existing == null) {
-                        items[id] = CartItem(lineProduct(id, name, price), quantity)
-                    } else {
-                        existing.quantity += quantity
-                    }
-                }
-                carts[email] = items
-            }
-        } catch (_: Exception) {
-            carts.clear()
-        }
-    }
-
-    private fun lineProduct(id: String, name: String, price: Double): Product {
-        val catalog = ShopCatalog.productById(id)
-        return Product(
-            id = id,
-            name = name,
-            description = catalog?.description.orEmpty(),
-            price = price,
-            category = catalog?.category.orEmpty(),
-            petType = catalog?.petType.orEmpty(),
-            featured = catalog?.featured ?: false,
-            onPromotion = catalog?.onPromotion ?: false,
-            imageColorRes = catalog?.imageColorRes ?: R.color.green_container,
-            imageIconRes = catalog?.imageIconRes ?: R.drawable.ic_pet_dog,
-            stock = catalog?.stock ?: 1,
-            available = true
+        val item = activeItems()[productId] ?: return
+        val db = FirebaseGate.db(context) ?: return
+        val data = mapOf(
+            "productId" to item.product.id,
+            "sellerId" to item.product.sellerId,
+            "storeName" to item.product.storeName,
+            "name" to item.product.name,
+            "price" to item.product.price,
+            "quantity" to item.quantity,
+            "photoUrl" to item.product.photoUrl
         )
+        db.collection(CARTS).document(activeUid).collection(LINES).document(productId)
+            .set(data, SetOptions.merge())
+    }
+
+    private fun delete(productId: String) {
+        val context = appContext ?: return
+        val db = FirebaseGate.db(context) ?: return
+        if (activeUid.isEmpty()) return
+        db.collection(CARTS).document(activeUid).collection(LINES).document(productId).delete()
     }
 
     private fun notifyListeners() {
@@ -195,10 +157,6 @@ object CartStore {
 
     private val NO_OWNER = linkedMapOf<String, CartItem>()
 
-    private const val PREFS_NAME = "club_canino_carts"
-    private const val KEY_CARTS = "buyer_carts"
-    private const val JSON_ID = "productId"
-    private const val JSON_NAME = "name"
-    private const val JSON_PRICE = "price"
-    private const val JSON_QUANTITY = "quantity"
+    private const val CARTS = "carts"
+    private const val LINES = "lines"
 }

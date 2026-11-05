@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.clubcanino.app.R
 import com.clubcanino.app.buyer.data.CartStore
+import com.clubcanino.app.seller.data.MarketCatalog
 import com.clubcanino.app.seller.data.ShopCatalog
 import com.google.android.material.button.MaterialButton
 
@@ -66,7 +67,7 @@ class ProductDetailActivity : AppCompatActivity() {
         ShopCatalog.bind(this)
         CartStore.bind(this)
         val productId = intent.getStringExtra(EXTRA_PRODUCT_ID).orEmpty()
-        val product = ShopCatalog.buyerProduct(productId)
+        val product = MarketCatalog.product(productId) ?: ShopCatalog.buyerProduct(productId)
         if (product == null) {
             Toast.makeText(this, R.string.msg_product_not_found, Toast.LENGTH_SHORT).show()
             finish()
@@ -76,7 +77,7 @@ class ProductDetailActivity : AppCompatActivity() {
         val image = findViewById<ImageView>(R.id.imageProduct)
         val textQuantity = findViewById<TextView>(R.id.textQuantity)
         findViewById<View>(R.id.imageContainer).clipToOutline = true
-        image.setImageResource(BuyerVisuals.photoRes(product))
+        RemoteImages.load(image, product.photoUrl, BuyerVisuals.photoRes(product))
         findViewById<TextView>(R.id.textName).text = product.name
         val availability = getString(
             if (product.available) R.string.product_available else R.string.product_unavailable

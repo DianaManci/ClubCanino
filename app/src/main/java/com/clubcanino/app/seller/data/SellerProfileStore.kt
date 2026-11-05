@@ -47,7 +47,8 @@ object SellerProfileStore {
         val user = ShopUserStore.findByEmail(email)
         return SellerProfile(
             fullName = user?.fullName?.takeIf { it.isNotBlank() } ?: email,
-            storeName = context.getString(R.string.seller_store_default),
+            storeName = user?.storeName?.takeIf { it.isNotBlank() }
+                ?: context.getString(R.string.seller_store_default),
             email = email,
             phone = user?.phone.orEmpty(),
             city = ""
@@ -59,6 +60,7 @@ object SellerProfileStore {
         val email = BuyerSession.currentEmail(context)?.let(BuyerSession::normalizeEmail) ?: return
         profiles[email] = profile.copy(email = email)
         persist()
+        ShopUserStore.saveStoreProfile(context, profile.fullName, profile.phone, profile.storeName)
     }
 
     private fun ensureLoaded() {

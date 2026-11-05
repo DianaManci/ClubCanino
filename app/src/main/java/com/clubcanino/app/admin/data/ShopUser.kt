@@ -5,5 +5,6 @@ data class ShopUser(
     val fullName: String,
     val email: String,
     val phone: String,
-    val role: String
+    val role: String,
+    val storeName: String = ""
 )

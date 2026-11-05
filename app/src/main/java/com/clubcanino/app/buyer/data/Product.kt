@@ -12,5 +12,8 @@ data class Product(
     val imageColorRes: Int,
     val imageIconRes: Int,
     val stock: Int = 1,
-    val available: Boolean = true
+    val available: Boolean = true,
+    val sellerId: String = "",
+    val storeName: String = "",
+    val photoUrl: String = ""
 )

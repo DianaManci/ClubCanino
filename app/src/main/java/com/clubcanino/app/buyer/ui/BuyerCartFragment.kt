@@ -1,6 +1,5 @@
 package com.clubcanino.app.buyer.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
 import com.clubcanino.app.buyer.data.CartStore
@@ -47,13 +45,7 @@ class BuyerCartFragment : Fragment() {
         emptyGroup = view.findViewById(R.id.emptyCartGroup)
         headerBinder = BuyerHeaderBinder(this, view).also { it.bind() }
 
-        buttonCheckout.setOnClickListener {
-            if (CartStore.items().isEmpty()) {
-                Toast.makeText(requireContext(), R.string.buyer_cart_empty, Toast.LENGTH_SHORT).show()
-            } else {
-                startActivity(Intent(requireContext(), PaymentActivity::class.java))
-            }
-        }
+        buttonCheckout.visibility = View.GONE
     }
 
     override fun onStart() {
@@ -81,11 +73,19 @@ class BuyerCartFragment : Fragment() {
         buttonCheckout.isEnabled = !empty
 
         val inflater = layoutInflater
-        items.forEach { item ->
+        items.groupBy { it.product.sellerId.ifBlank { it.product.storeName } }.forEach { (_, lines) ->
+            val store = lines.first().product.storeName.ifBlank { getString(R.string.register_role_seller) }
+            val header = TextView(requireContext()).apply {
+                text = store
+                setTextAppearance(R.style.TextAppearance_ClubCanino_Title)
+                setPadding(0, resources.getDimensionPixelSize(R.dimen.spacing_md), 0, resources.getDimensionPixelSize(R.dimen.spacing_xs))
+            }
+            containerItems.addView(header)
+            lines.forEach { item ->
             val row = inflater.inflate(R.layout.item_cart_line, containerItems, false)
             val image = row.findViewById<ImageView>(R.id.imageProduct)
             (image.parent as View).clipToOutline = true
-            image.setImageResource(BuyerVisuals.photoRes(item.product))
+            RemoteImages.load(image, item.product.photoUrl, BuyerVisuals.photoRes(item.product))
             row.findViewById<TextView>(R.id.textName).text = item.product.name
             row.findViewById<TextView>(R.id.textUnitPrice).text =
                 getString(R.string.cart_unit_price, MoneyFormat.format(item.product.price))
@@ -104,6 +104,14 @@ class BuyerCartFragment : Fragment() {
                 CartStore.remove(item.product.id)
             }
             containerItems.addView(row)
+            }
+            val storeTotal = lines.sumOf { it.lineTotal }
+            val totalLine = TextView(requireContext()).apply {
+                text = getString(R.string.cart_store_total, store, MoneyFormat.format(storeTotal))
+                setTextAppearance(R.style.TextAppearance_ClubCanino_Body)
+                setPadding(0, resources.getDimensionPixelSize(R.dimen.spacing_xs), 0, resources.getDimensionPixelSize(R.dimen.spacing_sm))
+            }
+            containerItems.addView(totalLine)
         }
 
         val subtotal = CartStore.subtotal()

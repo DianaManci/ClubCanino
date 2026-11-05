@@ -12,5 +12,8 @@ data class ShopProduct(
     val imageColorRes: Int,
     val imageIconRes: Int,
     val featured: Boolean = false,
-    val onPromotion: Boolean = false
+    val onPromotion: Boolean = false,
+    val sellerId: String = "",
+    val storeName: String = "",
+    val photoUrl: String = ""
 )

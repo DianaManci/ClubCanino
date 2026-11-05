@@ -74,9 +74,14 @@
     <string name="error_login_invalid">Correo o contraseña incorrectos</string>
 
     <!-- Messages -->
-    <string name="msg_recovery_pending">
-        El correo tiene un formato válido. Esta versión no envía el enlace de recuperación.
-    </string>
+    <string name="msg_recovery_sent">Te enviamos un enlace para restablecer la contraseña.</string>
+    <string name="msg_firebase_missing">Falta google-services.json. Agrégalo en la carpeta app para conectar Firebase.</string>
+    <string name="register_role_buyer">Comprador</string>
+    <string name="register_role_seller">Vendedor</string>
+    <string name="action_pick_photo">Elegir foto</string>
+    <string name="msg_photo_required">Elige una foto del producto</string>
+    <string name="msg_photo_selected">Foto lista para guardar</string>
+    <string name="cart_store_total">%1$s: %2$s</string>
     <string name="msg_biometric_success_local">
         La huella se verificó en este dispositivo. Para entrar a la tienda usa tu correo y contraseña.
     </string>

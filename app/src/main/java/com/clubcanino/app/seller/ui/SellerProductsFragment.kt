@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
+import com.clubcanino.app.seller.data.MarketCatalog
 import com.google.android.material.textfield.TextInputEditText
 
 class SellerProductsFragment : Fragment() {
@@ -16,6 +18,13 @@ class SellerProductsFragment : Fragment() {
     private lateinit var container: LinearLayout
     private lateinit var emptyView: TextView
     private lateinit var editSearch: TextInputEditText
+    private val pickPhoto = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        ShopProductEditor.deliverPhoto(uri)
+    }
+
+    fun launchPhotoPick() {
+        pickPhoto.launch("image/*")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +45,9 @@ class SellerProductsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (this::container.isInitialized) render()
+        if (this::container.isInitialized) {
+            MarketCatalog.refresh(requireContext()) { if (isAdded) render() }
+        }
     }
 
     private fun render() {

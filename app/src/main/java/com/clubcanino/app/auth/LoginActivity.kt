@@ -71,15 +71,21 @@ class LoginActivity : AppCompatActivity() {
 
         if (!isValid) return
 
-        ShopUserStore.bind(this)
-        val account = ShopUserStore.authenticate(email, password)
-        if (account == null) {
-            inputLayoutPassword.error = getString(R.string.error_login_invalid)
+        if (!FirebaseGate.isReady(this)) {
+            inputLayoutEmail.error = getString(R.string.msg_firebase_missing)
             return
         }
 
-        BuyerSession.start(this, account.email, account.role)
-        RoleNavigator.openRoleHome(this, RoleNavigator.roleOf(account.role))
+        findViewById<MaterialButton>(R.id.buttonLogin).isEnabled = false
+        ShopUserStore.signIn(this, email, password) { account ->
+            findViewById<MaterialButton>(R.id.buttonLogin).isEnabled = true
+            if (account == null) {
+                inputLayoutPassword.error = getString(R.string.error_login_invalid)
+                return@signIn
+            }
+            BuyerSession.start(this, account.email, account.role)
+            RoleNavigator.openRoleHome(this, RoleNavigator.roleOf(account.role))
+        }
     }
 
     private fun keepFocusedFieldVisible(scroll: ScrollView) {
