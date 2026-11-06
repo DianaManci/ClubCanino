@@ -2,6 +2,7 @@ package com.clubcanino.app.seller.data
 
 import android.content.Context
 import com.clubcanino.app.admin.data.ShopUserStore
+import com.clubcanino.app.buyer.data.BuyerDemoData
 import com.clubcanino.app.buyer.data.BuyerSession
 
 /**
@@ -145,6 +146,7 @@ object ShopOrders {
             ordersInternal.addAll(demoOrders())
             persist()
         }
+        repairSavedDemoOrders()
         linkPurchasesMissingEmail()
     }
 
@@ -221,13 +223,37 @@ object ShopOrders {
     )
 
     private fun line(productId: String, quantity: Int): ShopOrderLine {
-        val product = ShopCatalog.productById(productId)
+        val product = BuyerDemoData.products.find { it.id == productId }
         return ShopOrderLine(
             productId = productId,
             productName = product?.name ?: productId,
             quantity = quantity,
             unitPrice = product?.price ?: 0.0
         )
+    }
+
+    /**
+     * Demo orders saved before the catalog existed kept the id as the name and a zero price.
+     */
+    private fun repairSavedDemoOrders() {
+        var changed = false
+        val repaired = ordersInternal.map { order ->
+            if (order.id !in DEMO_ORDER_IDS) return@map order
+            val lines = order.lines.map { line ->
+                val product = BuyerDemoData.products.find { it.id == line.productId } ?: return@map line
+                if (line.unitPrice == 0.0 || line.productName == line.productId) {
+                    changed = true
+                    line.copy(productName = product.name, unitPrice = product.price)
+                } else {
+                    line
+                }
+            }
+            order.copy(lines = lines)
+        }
+        if (!changed) return
+        ordersInternal.clear()
+        ordersInternal.addAll(repaired)
+        persist()
     }
 
     private fun order(

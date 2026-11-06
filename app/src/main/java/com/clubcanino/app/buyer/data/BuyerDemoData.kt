@@ -36,8 +36,8 @@ object BuyerDemoData {
     }
 
     /**
-     * Loads pets for the active buyer from local storage.
-     * Seeds Luna and Michi only when that buyer has no saved list yet.
+     * Loads only the pets this buyer created. The old automatic Luna and Michi
+     * are dropped so a new session starts empty.
      */
     fun ensurePetsLoaded(context: Context) {
         val app = context.applicationContext
@@ -49,11 +49,11 @@ object BuyerDemoData {
         petsInternal.clear()
 
         val store = PetLocalStore(app)
-        if (store.hasSavedPets(buyerId)) {
-            petsInternal.addAll(store.load(buyerId))
-        } else {
-            petsInternal.addAll(defaultSeedPets())
-            store.save(buyerId, petsInternal.toList())
+        val saved = store.load(buyerId)
+        val ownPets = saved.filterNot { it.id == "pet1" || it.id == "pet2" }
+        petsInternal.addAll(ownPets)
+        if (ownPets.size != saved.size) {
+            store.save(buyerId, ownPets)
         }
     }
 
@@ -105,11 +105,6 @@ object BuyerDemoData {
         val buyerId = loadedBuyerId ?: BuyerSession.currentBuyerId(context)
         PetLocalStore(context).save(buyerId, petsInternal.toList())
     }
-
-    private fun defaultSeedPets(): List<Pet> = listOf(
-        Pet("pet1", "Luna", "Perro", "Labrador", "3 años"),
-        Pet("pet2", "Michi", "Gato", "Mestizo", "2 años")
-    )
 
     val orders = listOf(
         OrderSummary("ORD-1042", "28 oct 2026", "Entregado", 129900.0, 3),
