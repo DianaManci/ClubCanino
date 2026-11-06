@@ -146,7 +146,7 @@ object ShopOrders {
             ordersInternal.addAll(demoOrders())
             persist()
         }
-        repairSavedDemoOrders()
+        repairIncompleteLines()
         linkPurchasesMissingEmail()
     }
 
@@ -223,7 +223,7 @@ object ShopOrders {
     )
 
     private fun line(productId: String, quantity: Int): ShopOrderLine {
-        val product = BuyerDemoData.products.find { it.id == productId }
+        val product = BuyerDemoData.products.find { it.id.equals(productId, ignoreCase = true) }
         return ShopOrderLine(
             productId = productId,
             productName = product?.name ?: productId,
@@ -233,20 +233,25 @@ object ShopOrders {
     }
 
     /**
-     * Demo orders saved before the catalog existed kept the id as the name and a zero price.
+     * Fills a stored line from the catalog only when the name is still the product
+     * code or the price was never saved. Lines that already have a name and a price stay as they are.
      */
-    private fun repairSavedDemoOrders() {
+    private fun repairIncompleteLines() {
+        val context = appContext ?: return
+        ShopCatalog.bind(context)
         var changed = false
         val repaired = ordersInternal.map { order ->
-            if (order.id !in DEMO_ORDER_IDS) return@map order
-            val lines = order.lines.map { line ->
-                val product = BuyerDemoData.products.find { it.id == line.productId } ?: return@map line
-                if (line.unitPrice == 0.0 || line.productName == line.productId) {
-                    changed = true
-                    line.copy(productName = product.name, unitPrice = product.price)
-                } else {
-                    line
-                }
+            val lines = order.lines.map { stored ->
+                val nameMissing = stored.productName.isBlank() ||
+                    stored.productName.equals(stored.productId, ignoreCase = true)
+                val priceMissing = stored.unitPrice == 0.0
+                if (!nameMissing && !priceMissing) return@map stored
+                val known = knownProduct(stored.productId) ?: return@map stored
+                val name = if (nameMissing) known.first else stored.productName
+                val price = if (priceMissing && known.second > 0.0) known.second else stored.unitPrice
+                if (name == stored.productName && price == stored.unitPrice) return@map stored
+                changed = true
+                stored.copy(productName = name, unitPrice = price)
             }
             order.copy(lines = lines)
         }
@@ -254,6 +259,18 @@ object ShopOrders {
         ordersInternal.clear()
         ordersInternal.addAll(repaired)
         persist()
+    }
+
+    private fun knownProduct(productId: String): Pair<String, Double>? {
+        val shop = ShopCatalog.products().find { it.id.equals(productId, ignoreCase = true) }
+        if (shop != null && shop.name.isNotBlank() && shop.price > 0.0) {
+            return shop.name to shop.price
+        }
+        val demo = BuyerDemoData.products.find { it.id.equals(productId, ignoreCase = true) }
+        if (demo != null && demo.name.isNotBlank() && demo.price > 0.0) {
+            return demo.name to demo.price
+        }
+        return null
     }
 
     private fun order(

@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.clubcanino.app.R
+import com.clubcanino.app.buyer.data.BuyerDemoData
 import com.clubcanino.app.buyer.data.BuyerSession
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -54,6 +55,7 @@ object RoleChrome {
     fun bindReturnToRoles(root: View, activity: Activity) {
         root.findViewById<View>(R.id.buttonReturnRoles)?.setOnClickListener {
             BuyerSession.clear(activity)
+            BuyerDemoData.clearMemory()
             activity.finish()
         }
     }

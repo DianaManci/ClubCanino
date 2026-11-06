@@ -36,25 +36,31 @@ object BuyerDemoData {
     }
 
     /**
-     * Loads only the pets this buyer created. The old automatic Luna and Michi
-     * are dropped so a new session starts empty.
+     * Loads only the pets the signed-in buyer created.
+     * Without a session the list stays empty and is not borrowed from another account.
      */
     fun ensurePetsLoaded(context: Context) {
         val app = context.applicationContext
         appContext = app
-        val buyerId = BuyerSession.currentBuyerId(app)
-        if (loadedBuyerId == buyerId) return
-
+        PetLocalStore(app).removeAutomaticPets()
+        val buyerId = BuyerSession.currentEmail(app)
+        if (buyerId == null) {
+            loadedBuyerId = null
+            petsInternal.clear()
+            return
+        }
+        if (loadedBuyerId == buyerId) {
+            petsInternal.removeAll { it.id == "pet1" || it.id == "pet2" }
+            return
+        }
         loadedBuyerId = buyerId
         petsInternal.clear()
+        petsInternal.addAll(PetLocalStore(app).load(buyerId))
+    }
 
-        val store = PetLocalStore(app)
-        val saved = store.load(buyerId)
-        val ownPets = saved.filterNot { it.id == "pet1" || it.id == "pet2" }
-        petsInternal.addAll(ownPets)
-        if (ownPets.size != saved.size) {
-            store.save(buyerId, ownPets)
-        }
+    fun clearMemory() {
+        loadedBuyerId = null
+        petsInternal.clear()
     }
 
     fun pets(): List<Pet> = petsInternal.toList()
@@ -102,7 +108,7 @@ object BuyerDemoData {
 
     private fun persistPets() {
         val context = appContext ?: return
-        val buyerId = loadedBuyerId ?: BuyerSession.currentBuyerId(context)
+        val buyerId = BuyerSession.currentEmail(context) ?: return
         PetLocalStore(context).save(buyerId, petsInternal.toList())
     }
 

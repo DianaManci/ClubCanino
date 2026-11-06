@@ -45,7 +45,7 @@ object BuyerSession {
             .edit()
             .remove(KEY_BUYER_EMAIL)
             .remove(KEY_ROLE)
-            .apply()
+            .commit()
     }
 
     fun currentEmail(context: Context): String? {

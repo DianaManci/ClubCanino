@@ -54,7 +54,11 @@ class BuyerProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        BuyerDemoData.ensurePetsLoaded(requireContext())
         view?.let { bindAccount(it) }
+        if (::petsContainer.isInitialized) {
+            renderPets()
+        }
         if (::ordersContainer.isInitialized) {
             renderOrders()
         }
