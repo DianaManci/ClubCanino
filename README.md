@@ -63,9 +63,9 @@ Cuentas de demostración: la app crea usuarios de prueba (dominio `@clubcanino.d
 
 | Inicio de sesión | Catálogo | Carrito | Panel del vendedor | Panel del administrador |
 |---|---|---|---|---|
-| ![Login](docs/login.png) | ![Catálogo](docs/catalogo.png) | ![Carrito](docs/carrito.png) | ![Vendedor](docs/vendedor.png) | ![Admin](docs/admin.png) |
+| ![Login](docs/login.png) | ![Catálogo](docs/catalogo.png) | ![Carrito](docs/carrito.png) | ![Vendedor](docs/vendedor.png) | ![Admin](docs/administrador.png) |
 
-> Pendiente: agregar capturas en la carpeta `docs/` y un APK en *Releases*.
+> Pendiente: publicar un APK en *Releases*.
 
 ## Autora
 

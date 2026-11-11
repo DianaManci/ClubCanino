@@ -24,7 +24,23 @@ class PetLocalStore(context: Context) {
     fun save(buyerId: String, pets: List<Pet>) {
         prefs.edit()
             .putString(petsKey(buyerId), encode(pets))
-            .apply()
+            .commit()
+    }
+
+    /** Drops the automatic Luna and Michi records from every saved buyer. */
+    fun removeAutomaticPets() {
+        val editor = prefs.edit()
+        var changed = false
+        prefs.all.forEach { (key, value) ->
+            if (!key.startsWith(KEY_PETS_PREFIX) || value !is String) return@forEach
+            val kept = decode(value).filterNot { it.id == "pet1" || it.id == "pet2" }
+            val original = decode(value)
+            if (kept.size != original.size) {
+                editor.putString(key, encode(kept))
+                changed = true
+            }
+        }
+        if (changed) editor.commit()
     }
 
     private fun petsKey(buyerId: String): String =

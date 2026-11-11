@@ -78,6 +78,7 @@ object ShopOrderDialogs {
                     R.string.shop_order_line,
                     line.productName,
                     line.quantity,
+                    MoneyFormat.format(line.unitPrice),
                     MoneyFormat.format(line.lineTotal)
                 )
                 setTextAppearance(R.style.TextAppearance_ClubCanino_Body)

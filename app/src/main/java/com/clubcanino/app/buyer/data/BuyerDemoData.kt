@@ -40,6 +40,12 @@ object BuyerDemoData {
     /**
      * Loads only the pets saved for the signed-in user. A new account starts empty.
      */
+    fun clearMemory() {
+        appContext = null
+        loadedBuyerId = null
+        petsReady = false
+        petsInternal.clear()
+    }
     fun ensurePetsLoaded(context: Context, onReady: (() -> Unit)? = null) {
         val app = context.applicationContext
         appContext = app

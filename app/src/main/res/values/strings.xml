@@ -250,7 +250,7 @@
     <string name="msg_product_deleted">Producto eliminado</string>
     <string name="msg_products_empty">No hay productos para esta búsqueda.</string>
     <string name="shop_order_meta">%1$s · %2$s · %3$s · %4$d ítems</string>
-    <string name="shop_order_line">%1$s × %2$d · %3$s</string>
+    <string name="shop_order_line">%1$s × %2$d · %3$s c/u · %4$s</string>
     <string name="action_advance_status">Marcar como %1$s</string>
     <string name="action_cancel_order">Cancelar pedido</string>
     <string name="dialog_cancel_order_title">Cancelar pedido</string>
