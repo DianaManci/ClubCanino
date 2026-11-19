@@ -20,15 +20,28 @@ const privateKey = process.env.EPAYCO_PRIVATE_KEY || "";
 const testMode = true;
 
 let firebaseReady = false;
-const credentialStatus = runtime.paymentReadiness();
-if (!credentialStatus.missing.includes("firebase_credentials")) {
+const credentialsReport = runtime.inspectCredentials();
+console.log(
+  "firebase_credentials configured=%s exists=%s readable=%s json=%s code=%s",
+  credentialsReport.configured,
+  credentialsReport.exists,
+  credentialsReport.readable,
+  credentialsReport.json,
+  credentialsReport.code
+);
+if (credentialsReport.exists && credentialsReport.readable && credentialsReport.json) {
   try {
     if (!admin.apps.length) {
       admin.initializeApp({ credential: admin.credential.applicationDefault() });
     }
     firebaseReady = true;
-  } catch (_error) {
+  } catch (error) {
     firebaseReady = false;
+    console.log(
+      "firebase_credentials init_error name=%s code=%s",
+      error.name || "",
+      error.code || ""
+    );
   }
 }
 

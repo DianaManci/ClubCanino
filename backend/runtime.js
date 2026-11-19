@@ -27,6 +27,36 @@ function loadLocalEnv(envFile = ENV_FILE) {
   }
 }
 
+function inspectCredentials() {
+  const credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS || "";
+  const report = {
+    configured: Boolean(credentials),
+    exists: false,
+    readable: false,
+    json: false,
+    code: ""
+  };
+  if (!credentials) return report;
+  report.exists = fs.existsSync(credentials);
+  if (!report.exists) return report;
+  let text = "";
+  try {
+    fs.accessSync(credentials, fs.constants.R_OK);
+    text = fs.readFileSync(credentials, "utf8");
+    report.readable = true;
+  } catch (error) {
+    report.code = error.code || error.name || "read_error";
+    return report;
+  }
+  try {
+    const parsed = JSON.parse(text);
+    report.json = Boolean(parsed) && typeof parsed === "object" && !Array.isArray(parsed);
+  } catch (error) {
+    report.code = error.name || "parse_error";
+  }
+  return report;
+}
+
 function paymentReadiness() {
   const liveRequested = String(process.env.EPAYCO_TEST || "true").toLowerCase() === "false";
   const hasKeys = Boolean(process.env.EPAYCO_PUBLIC_KEY) && Boolean(process.env.EPAYCO_PRIVATE_KEY);
@@ -46,5 +76,6 @@ function paymentReadiness() {
 module.exports = {
   ENV_FILE,
   loadLocalEnv,
+  inspectCredentials,
   paymentReadiness
 };
