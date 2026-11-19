@@ -1,0 +1,16 @@
+{
+  "name": "clubcanino-backend",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20.12.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "4.21.2",
+    "firebase-admin": "13.4.0"
+  }
+}

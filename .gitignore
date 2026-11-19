@@ -10,3 +10,9 @@
 local.properties
 
 app/google-services.json
+epayco.properties
+backend.properties
+backend/.env
+backend/node_modules/
+backend/service-account.json
+**/service-account*.json
