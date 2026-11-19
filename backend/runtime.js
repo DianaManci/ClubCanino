@@ -57,6 +57,23 @@ function inspectCredentials() {
   return report;
 }
 
+function inspectSecretMount() {
+  const directory = "/etc/secrets";
+  const filename = "service-account.json";
+  const report = { directory: false, listed: false, hasServiceAccount: false, count: 0, code: "" };
+  try {
+    report.directory = fs.existsSync(directory) && fs.statSync(directory).isDirectory();
+    if (!report.directory) return report;
+    const names = fs.readdirSync(directory);
+    report.listed = true;
+    report.count = names.length;
+    report.hasServiceAccount = names.includes(filename);
+  } catch (error) {
+    report.code = error.code || error.name || "list_error";
+  }
+  return report;
+}
+
 function paymentReadiness() {
   const liveRequested = String(process.env.EPAYCO_TEST || "true").toLowerCase() === "false";
   const hasKeys = Boolean(process.env.EPAYCO_PUBLIC_KEY) && Boolean(process.env.EPAYCO_PRIVATE_KEY);
@@ -77,5 +94,6 @@ module.exports = {
   ENV_FILE,
   loadLocalEnv,
   inspectCredentials,
+  inspectSecretMount,
   paymentReadiness
 };

@@ -29,6 +29,15 @@ console.log(
   credentialsReport.json,
   credentialsReport.code
 );
+const secretMount = runtime.inspectSecretMount();
+console.log(
+  "secret_mount directory=%s listed=%s hasServiceAccount=%s count=%s code=%s",
+  secretMount.directory,
+  secretMount.listed,
+  secretMount.hasServiceAccount,
+  secretMount.count,
+  secretMount.code
+);
 if (credentialsReport.exists && credentialsReport.readable && credentialsReport.json) {
   try {
     if (!admin.apps.length) {
