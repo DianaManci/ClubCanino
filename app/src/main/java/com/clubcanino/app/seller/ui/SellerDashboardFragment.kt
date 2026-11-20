@@ -12,8 +12,9 @@ import com.clubcanino.app.buyer.ui.MoneyFormat
 import com.clubcanino.app.navigation.StaffStat
 import com.clubcanino.app.navigation.StaffStats
 import com.clubcanino.app.seller.SellerMainActivity
+import com.clubcanino.app.auth.FirebaseGate
+import com.clubcanino.app.seller.data.MarketCatalog
 import com.clubcanino.app.seller.data.SellerProfileStore
-import com.clubcanino.app.seller.data.ShopCatalog
 import com.clubcanino.app.seller.data.ShopOrders
 
 class SellerDashboardFragment : Fragment() {
@@ -37,23 +38,43 @@ class SellerDashboardFragment : Fragment() {
         }
     }
 
+    private val ordersChanged: () -> Unit = { if (view != null) showStats() }
+
+    override fun onStart() {
+        super.onStart()
+        ShopOrders.addListener(ordersChanged)
+    }
+
+    override fun onStop() {
+        ShopOrders.removeListener(ordersChanged)
+        super.onStop()
+    }
+
     override fun onResume() {
         super.onResume()
+        showStats()
+    }
+
+    private fun showStats() {
         val root = view ?: return
         val profile = SellerProfileStore.current(requireContext())
         val firstName = profile.fullName.substringBefore(' ').ifBlank { profile.fullName }
         root.findViewById<TextView>(R.id.textWelcome).text =
             getString(R.string.seller_dashboard_hello, firstName)
 
-        val stats = root.findViewById<LinearLayout>(R.id.containerStats)
-        StaffStats.show(
-            stats,
-            listOf(
-                StaffStat(R.string.seller_stat_products, ShopCatalog.activeProducts().size.toString(), R.drawable.ic_stat_box),
-                StaffStat(R.string.seller_stat_orders, ShopOrders.activeOrders().size.toString(), R.drawable.ic_stat_clipboard),
-                StaffStat(R.string.seller_stat_sales, MoneyFormat.format(ShopOrders.deliveredRevenue()), R.drawable.ic_stat_chart),
-                StaffStat(R.string.seller_stat_low_stock, ShopCatalog.lowStockCount().toString(), R.drawable.ic_stat_warning)
+        val sellerId = FirebaseGate.auth(requireContext())?.currentUser?.uid
+        MarketCatalog.refresh(requireContext()) {
+            if (view == null) return@refresh
+            val stats = root.findViewById<LinearLayout>(R.id.containerStats)
+            StaffStats.show(
+                stats,
+                listOf(
+                    StaffStat(R.string.seller_stat_products, MarketCatalog.activeCount(sellerId).toString(), R.drawable.ic_stat_box),
+                    StaffStat(R.string.seller_stat_orders, ShopOrders.visibleActive(requireContext()).size.toString(), R.drawable.ic_stat_clipboard),
+                    StaffStat(R.string.seller_stat_sales, MoneyFormat.format(ShopOrders.deliveredRevenueFor(requireContext())), R.drawable.ic_stat_chart),
+                    StaffStat(R.string.seller_stat_low_stock, MarketCatalog.lowStockCount(sellerId).toString(), R.drawable.ic_stat_warning)
+                )
             )
-        )
+        }
     }
 }

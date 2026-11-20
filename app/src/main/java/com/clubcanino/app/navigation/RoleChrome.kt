@@ -1,6 +1,7 @@
 package com.clubcanino.app.navigation
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -9,8 +10,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.clubcanino.app.R
+import com.clubcanino.app.auth.FirebaseGate
+import com.clubcanino.app.auth.LoginActivity
 import com.clubcanino.app.buyer.data.BuyerDemoData
 import com.clubcanino.app.buyer.data.BuyerSession
+import com.clubcanino.app.seller.data.ShopOrders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 object RoleChrome {
@@ -54,9 +58,15 @@ object RoleChrome {
 
     fun bindReturnToRoles(root: View, activity: Activity) {
         root.findViewById<View>(R.id.buttonReturnRoles)?.setOnClickListener {
+            ShopOrders.stop()
+            FirebaseGate.auth(activity)?.signOut()
             BuyerSession.clear(activity)
             BuyerDemoData.clearMemory()
-            activity.finish()
+            activity.startActivity(
+                Intent(activity, LoginActivity::class.java).addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                )
+            )
         }
     }
 }

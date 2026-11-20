@@ -16,6 +16,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
+/** Ingreso con correo y contraseña. Si la huella todavía no guarda este acceso, ofrece registrarla antes de abrir el panel del rol. */
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var inputLayoutEmail: TextInputLayout
@@ -84,7 +85,20 @@ class LoginActivity : AppCompatActivity() {
                 return@signIn
             }
             BuyerSession.start(this, account.email, account.role)
-            RoleNavigator.openRoleHome(this, RoleNavigator.roleOf(account.role))
+            val openHome = {
+                if (!isFinishing && !isDestroyed) {
+                    RoleNavigator.openRoleHome(this, RoleNavigator.roleOf(account.role))
+                }
+            }
+            if (!BiometricCredentials.shouldOfferEnroll(this, email)) {
+                openHome()
+                return@signIn
+            }
+            findViewById<MaterialButton>(R.id.buttonLogin).isEnabled = false
+            BiometricCredentials.enroll(this, email, password) {
+                findViewById<MaterialButton>(R.id.buttonLogin).isEnabled = true
+                openHome()
+            }
         }
     }
 

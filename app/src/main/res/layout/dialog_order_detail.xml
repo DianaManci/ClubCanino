@@ -26,6 +26,14 @@
             android:textAppearance="@style/TextAppearance.ClubCanino.Caption" />
 
         <TextView
+            android:id="@+id/textOrderAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:textAppearance="@style/TextAppearance.ClubCanino.Body"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/textOrderStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

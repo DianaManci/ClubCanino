@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
 import com.clubcanino.app.buyer.ui.MoneyFormat
@@ -47,6 +48,32 @@ class AdminSalesFragment : Fragment() {
         ordersContainer = view.findViewById(R.id.containerSalesOrders)
         emptyView = view.findViewById(R.id.textEmpty)
         buildFilters()
+    }
+
+    private val ordersChanged: () -> Unit = {
+        if (view != null && this::ordersContainer.isInitialized) render()
+    }
+
+    private val ordersError: (String) -> Unit = { message ->
+        if (isAdded) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.msg_orders_listener_error, message),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ShopOrders.addListener(ordersChanged)
+        ShopOrders.addErrorListener(ordersError)
+    }
+
+    override fun onStop() {
+        ShopOrders.removeListener(ordersChanged)
+        ShopOrders.removeErrorListener(ordersError)
+        super.onStop()
     }
 
     override fun onResume() {

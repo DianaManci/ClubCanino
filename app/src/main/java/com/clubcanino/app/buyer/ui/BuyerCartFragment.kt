@@ -1,5 +1,6 @@
 package com.clubcanino.app.buyer.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -45,7 +46,9 @@ class BuyerCartFragment : Fragment() {
         emptyGroup = view.findViewById(R.id.emptyCartGroup)
         headerBinder = BuyerHeaderBinder(this, view).also { it.bind() }
 
-        buttonCheckout.visibility = View.GONE
+        buttonCheckout.setOnClickListener {
+            startActivity(Intent(requireContext(), PaymentActivity::class.java))
+        }
     }
 
     override fun onStart() {

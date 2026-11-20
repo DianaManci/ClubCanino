@@ -1,0 +1,38 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function userRole() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role;
+    }
+    function canManagePhotos(userId) {
+      return signedIn()
+        && request.auth.uid == userId
+        && (userRole() == "Vendedor" || userRole() == "Administrador");
+    }
+    function currentUpload(name) {
+      return request.resource.size > 0
+        && request.resource.size < 5 * 1024 * 1024
+        && name.matches(".*\\.jpg")
+        && (
+          request.resource.contentType == "image/jpeg"
+          || request.resource.contentType == "application/octet-stream"
+        );
+    }
+
+    match /products/{userId}/{fileName} {
+      allow read: if signedIn();
+      allow create, update: if canManagePhotos(userId) && currentUpload(fileName);
+      allow delete: if signedIn() && (
+        userRole() == "Administrador"
+        || (request.auth.uid == userId && userRole() == "Vendedor")
+      );
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

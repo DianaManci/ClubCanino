@@ -33,11 +33,10 @@ class BuyerProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         headerBinder = BuyerHeaderBinder(this, view).also { it.bind() }
-        BuyerDemoData.ensurePetsLoaded(requireContext()) { if (isAdded) renderPets() }
-        bindAccount(view)
-
         petsContainer = view.findViewById(R.id.containerPets)
         ordersContainer = view.findViewById(R.id.containerOrders)
+        BuyerDemoData.ensurePetsLoaded(requireContext()) { if (isAdded) renderPets() }
+        bindAccount(view)
 
         view.findViewById<MaterialButton>(R.id.buttonAddPet).setOnClickListener {
             showPetFormDialog(pet = null)
@@ -47,9 +46,25 @@ class BuyerProfileFragment : Fragment() {
         renderOrders()
     }
 
+    private val ordersChanged: () -> Unit = {
+        if (view != null && ::ordersContainer.isInitialized) renderOrders()
+    }
+
+    private val ordersError: (String) -> Unit = { message ->
+        if (isAdded) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.msg_orders_listener_error, message),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         headerBinder?.start()
+        ShopOrders.addListener(ordersChanged)
+        ShopOrders.addErrorListener(ordersError)
     }
 
     override fun onResume() {
@@ -78,6 +93,8 @@ class BuyerProfileFragment : Fragment() {
     }
 
     override fun onStop() {
+        ShopOrders.removeListener(ordersChanged)
+        ShopOrders.removeErrorListener(ordersError)
         headerBinder?.stop()
         super.onStop()
     }
@@ -127,12 +144,14 @@ class BuyerProfileFragment : Fragment() {
         orders.forEach { order ->
             val row = inflater.inflate(R.layout.item_order_row, ordersContainer, false)
             row.findViewById<TextView>(R.id.textOrderId).text = order.id
-            row.findViewById<TextView>(R.id.textOrderMeta).text = getString(
+            val meta = getString(
                 R.string.order_meta_format,
                 order.dateLabel,
-                order.status,
+                order.displayStatus,
                 order.itemCount
             )
+            row.findViewById<TextView>(R.id.textOrderMeta).text =
+                if (order.address.isBlank()) meta else meta + "\n" + order.address
             row.findViewById<TextView>(R.id.textOrderTotal).text = MoneyFormat.format(order.total)
             ordersContainer.addView(row)
         }

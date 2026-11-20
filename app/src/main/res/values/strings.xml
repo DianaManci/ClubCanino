@@ -65,6 +65,9 @@
     <string name="biometric_prompt_title">Autenticación biométrica</string>
     <string name="biometric_prompt_subtitle">Confirma tu identidad con la huella</string>
     <string name="biometric_prompt_negative">Usar contraseña</string>
+    <string name="biometric_enroll_title">Habilitar acceso con huella</string>
+    <string name="biometric_enroll_subtitle">Confirma tu huella para guardar el acceso en este teléfono</string>
+    <string name="biometric_enroll_negative">Ahora no</string>
 
     <!-- Validation -->
     <string name="error_field_required">Este campo es obligatorio</string>
@@ -180,9 +183,40 @@
     <string name="msg_checkout_demo">
         La compra de demostración está lista en el carrito. El pago real se integrará en una etapa posterior.
     </string>
-    <string name="payment_title">Pago simulado</string>
-    <string name="payment_subtitle">Revisa el pedido y elige un método de demostración. No se piden datos bancarios ni se cobra dinero real.</string>
-    <string name="payment_header_subtitle">Pago de demostración</string>
+    <string name="payment_title">Pago</string>
+    <string name="payment_subtitle">Confirma la dirección de entrega y continúa con ePayco en modo de prueba.</string>
+    <string name="payment_header_subtitle">Entrega y pago</string>
+    <string name="payment_address_title">Dirección de entrega</string>
+    <string name="payment_location_waiting">Buscando tu ubicación…</string>
+    <string name="payment_location_denied">No se concedió el permiso de ubicación. El pedido se guarda sin dirección.</string>
+    <string name="payment_location_missing">No se pudo leer la ubicación del dispositivo.</string>
+    <string name="payment_location_coordinates">Ubicación %1$.5f, %2$.5f</string>
+    <string name="payment_epayco_description">Compra en Club Canino</string>
+    <string name="payment_address_manual_hint">Si la ubicación no aparece, escribe la dirección de entrega</string>
+    <string name="payment_address_required">Escribe la dirección de entrega para continuar.</string>
+    <string name="payment_backend_missing">El pago no está disponible: falta desplegar el backend que guarda la llave de ePayco. No se registró una compra pagada.</string>
+    <string name="payment_epayco_missing">ePayco no confirmó el pago. La compra no quedó pagada.</string>
+    <string name="msg_orders_listener_error">No se pudieron consultar los pedidos: %1$s</string>
+    <string name="msg_account_backend_missing">Esa operación de la cuenta requiere el backend con Firebase Admin. No se cambió Authentication.</string>
+    <string name="payment_epayco_confirmed">ePayco confirmó la transacción %1$s.</string>
+    <string name="payment_epayco_rejected">El pago no fue confirmado.</string>
+    <string name="payment_epayco_error">No se pudo abrir ePayco. Revisa las llaves y la conexión. La compra no quedó pagada.</string>
+    <string name="payment_order_saved_unpaid">El pedido quedó pendiente. El pago no se confirmó, así que la compra no está pagada.</string>
+    <string name="payment_order_denied">No se pudo guardar el pedido con tu sesión. No se registró un pago.</string>
+    <string name="payment_order_index">Falta el índice de pedidos en Firestore. No se registró un pago.</string>
+    <string name="payment_order_network">No hubo conexión con el pedido o con el pago. La compra no quedó pagada.</string>
+    <string name="payment_order_timeout">La compra tardó demasiado. Puedes intentarlo de nuevo. No se marcó como pagada.</string>
+    <string name="payment_epayco_test_only">Solo están habilitados los pagos de prueba.</string>
+    <string name="msg_biometric_needs_login">Primero entra con correo y contraseña en este teléfono. Después la huella podrá abrir la sesión.</string>
+    <string name="msg_biometric_signing_in">Huella verificada. Entrando a tu panel…</string>
+    <string name="msg_biometric_success">Huella verificada. Abriendo tu panel…</string>
+    <string name="msg_biometric_login_failed">No se pudo iniciar sesión con la huella. Inténtalo de nuevo o entra con correo y contraseña.</string>
+    <string name="msg_biometric_timeout">La entrada está tardando demasiado. Puedes intentarlo de nuevo.</string>
+    <string name="msg_biometric_lockout">Demasiados intentos. Espera un momento o entra con tu contraseña.</string>
+    <string name="photo_source_title">Foto del producto</string>
+    <string name="photo_source_gallery">Galería</string>
+    <string name="photo_source_camera">Cámara</string>
+    <string name="msg_camera_denied">Se necesita el permiso de la cámara para tomar la foto.</string>
     <string name="payment_summary_title">Resumen de la compra</string>
     <string name="payment_method_title">Método de pago</string>
     <string name="payment_method_cash">Efectivo contra entrega</string>
@@ -193,6 +227,7 @@
     <string name="action_confirm_purchase">Confirmar compra</string>
     <string name="payment_success_title">Compra registrada</string>
     <string name="payment_success_body">El pedido %1$s quedó en estado %2$s. Ya puede consultarlo el vendedor y aparece en el informe del administrador.</string>
+    <string name="payment_registered_unpaid">El pedido quedó registrado. El pago sigue pendiente y no se marcó como pagado.</string>
     <string name="payment_buyer_line">Comprador: %1$s</string>
     <string name="payment_date_line">Fecha: %1$s</string>
     <string name="payment_status_line">Estado: %1$s</string>
@@ -245,12 +280,15 @@
     <string name="dialog_edit_product">Editar producto</string>
     <string name="dialog_delete_product_title">Eliminar producto</string>
     <string name="dialog_delete_product_message">¿Seguro que deseas eliminar %1$s? El catálogo del comprador no cambia.</string>
+    <string name="msg_photo_not_stored">El producto quedó guardado. La foto no se pudo almacenar.</string>
     <string name="msg_product_added">Producto agregado</string>
     <string name="msg_product_updated">Producto actualizado</string>
     <string name="msg_product_deleted">Producto eliminado</string>
     <string name="msg_products_empty">No hay productos para esta búsqueda.</string>
     <string name="shop_order_meta">%1$s · %2$s · %3$s · %4$d ítems</string>
     <string name="shop_order_line">%1$s × %2$d · %3$s c/u · %4$s</string>
+    <string name="order_delivery_address">Entrega: %1$s</string>
+    <string name="order_delivery_with_location">Entrega: %1$s\nUbicación: %2$.5f, %3$.5f</string>
     <string name="action_advance_status">Marcar como %1$s</string>
     <string name="action_cancel_order">Cancelar pedido</string>
     <string name="dialog_cancel_order_title">Cancelar pedido</string>

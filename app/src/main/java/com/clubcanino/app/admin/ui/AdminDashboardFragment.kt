@@ -12,7 +12,7 @@ import com.clubcanino.app.admin.data.ShopUserStore
 import com.clubcanino.app.buyer.ui.MoneyFormat
 import com.clubcanino.app.navigation.StaffStat
 import com.clubcanino.app.navigation.StaffStats
-import com.clubcanino.app.seller.data.ShopCatalog
+import com.clubcanino.app.seller.data.MarketCatalog
 import com.clubcanino.app.seller.data.ShopOrders
 import com.clubcanino.app.seller.ui.ShopOrderDialogs
 
@@ -40,15 +40,31 @@ class AdminDashboardFragment : Fragment() {
         }
     }
 
+    private val ordersChanged: () -> Unit = { if (view != null) showDashboard() }
+
+    override fun onStart() {
+        super.onStart()
+        ShopOrders.addListener(ordersChanged)
+    }
+
+    override fun onStop() {
+        ShopOrders.removeListener(ordersChanged)
+        super.onStop()
+    }
+
     override fun onResume() {
         super.onResume()
+        MarketCatalog.refresh(requireContext()) { if (isAdded) showDashboard() }
+    }
+
+    private fun showDashboard() {
         val root = view ?: return
         val stats = root.findViewById<LinearLayout>(R.id.containerStats)
         StaffStats.show(
             stats,
             listOf(
                 StaffStat(R.string.admin_stat_users, ShopUserStore.count().toString(), R.drawable.ic_nav_users),
-                StaffStat(R.string.admin_stat_products, ShopCatalog.activeProducts().size.toString(), R.drawable.ic_stat_box),
+                StaffStat(R.string.admin_stat_products, MarketCatalog.activeCount(null).toString(), R.drawable.ic_stat_box),
                 StaffStat(R.string.admin_stat_orders, ShopOrders.activeOrders().size.toString(), R.drawable.ic_nav_cart),
                 StaffStat(R.string.admin_stat_sales, MoneyFormat.format(ShopOrders.deliveredRevenue()), R.drawable.ic_stat_dollar)
             )

@@ -13,6 +13,7 @@ import com.clubcanino.app.seller.data.ShopOrderStatus
 import com.clubcanino.app.seller.data.ShopOrders
 import com.google.android.material.button.MaterialButton
 
+/** Detalle del pedido para vendedor y administrador, incluida la dirección de entrega. */
 object ShopOrderDialogs {
 
     fun renderRows(
@@ -31,13 +32,13 @@ object ShopOrderDialogs {
                 R.string.shop_order_meta,
                 order.dateLabel,
                 order.buyerName,
-                order.status,
+                order.displayStatus,
                 order.itemCount
             )
             row.findViewById<TextView>(R.id.textOrderTotal).text = MoneyFormat.format(order.total)
             val status = row.findViewById<TextView>(R.id.textOrderStatus)
-            status.text = order.status
-            val statusStyle = statusStyle(order.status)
+            status.text = order.displayStatus
+            val statusStyle = statusStyle(order.displayStatus)
             status.setBackgroundResource(statusStyle.background)
             status.setTextColor(fragment.requireContext().getColor(statusStyle.textColor))
             row.findViewById<MaterialButton>(R.id.buttonViewOrder).setOnClickListener {
@@ -67,7 +68,20 @@ object ShopOrderDialogs {
         val content = fragment.layoutInflater.inflate(R.layout.dialog_order_detail, null, false)
         content.findViewById<TextView>(R.id.textOrderBuyer).text = order.buyerName
         content.findViewById<TextView>(R.id.textOrderDate).text = order.dateLabel
-        content.findViewById<TextView>(R.id.textOrderStatus).text = order.status
+        val addressView = content.findViewById<TextView>(R.id.textOrderAddress)
+        val address = order.address.trim()
+        val hasLocation = order.latitude != 0.0 || order.longitude != 0.0
+        if (address.isBlank() && !hasLocation) {
+            addressView.visibility = View.GONE
+        } else {
+            addressView.visibility = View.VISIBLE
+            addressView.text = if (hasLocation) {
+                fragment.getString(R.string.order_delivery_with_location, address.ifBlank { "—" }, order.latitude, order.longitude)
+            } else {
+                fragment.getString(R.string.order_delivery_address, address)
+            }
+        }
+        content.findViewById<TextView>(R.id.textOrderStatus).text = order.displayStatus
         content.findViewById<TextView>(R.id.textOrderDetailTotal).text =
             fragment.getString(R.string.cart_total, MoneyFormat.format(order.total))
 
@@ -100,11 +114,16 @@ object ShopOrderDialogs {
         val buttonAdvance = content.findViewById<MaterialButton>(R.id.buttonAdvanceOrder)
         val buttonCancel = content.findViewById<MaterialButton>(R.id.buttonCancelOrder)
         val next = ShopOrderStatus.next(order.status)
-        if (allowChanges && next != null) {
+        if (allowChanges && order.isPaid && next != null) {
             buttonAdvance.visibility = View.VISIBLE
             buttonAdvance.text = fragment.getString(R.string.action_advance_status, next)
             buttonAdvance.setOnClickListener {
-                if (ShopOrders.advance(order.id)) {
+                ShopOrders.advance(order.id) { updated ->
+                    if (!fragment.isAdded) return@advance
+                    if (!updated) {
+                        Toast.makeText(context, R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+                        return@advance
+                    }
                     Toast.makeText(context, R.string.msg_order_updated, Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                     onChanged()
@@ -121,7 +140,12 @@ object ShopOrderDialogs {
                     .setTitle(R.string.dialog_cancel_order_title)
                     .setMessage(fragment.getString(R.string.dialog_cancel_order_message, order.id))
                     .setPositiveButton(R.string.action_cancel_order) { _, _ ->
-                        if (ShopOrders.cancel(order.id)) {
+                        ShopOrders.cancel(order.id) { updated ->
+                            if (!fragment.isAdded) return@cancel
+                            if (!updated) {
+                                Toast.makeText(context, R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
+                                return@cancel
+                            }
                             Toast.makeText(context, R.string.msg_order_cancelled, Toast.LENGTH_SHORT).show()
                             dialog.dismiss()
                             onChanged()

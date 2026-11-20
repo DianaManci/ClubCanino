@@ -20,18 +20,43 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
+/** Formulario de productos para vendedor y administrador. La foto sale de la cámara o de la galería. */
 object ShopProductEditor {
 
+    interface ProductPhotoHost {
+        fun launchPhotoPick()
+    }
+
+    private var photoToken = 0
     private var photoCallback: ((Uri) -> Unit)? = null
 
     fun deliverPhoto(uri: Uri?) {
         uri?.let { photoCallback?.invoke(it) }
     }
 
+    fun beginPhoto(onPhoto: (Uri) -> Unit): Int {
+        val token = ++photoToken
+        photoCallback = { uri -> if (token == photoToken) onPhoto(uri) }
+        return token
+    }
+
+    fun cancelPhoto(token: Int) {
+        if (token != 0 && token == photoToken) {
+            photoToken++
+            photoCallback = null
+        }
+    }
+
     private fun sellerId(fragment: Fragment): String? {
         val role = BuyerSession.currentRole(fragment.requireContext())
         if (role != ShopUserStore.ROLE_SELLER) return null
         return FirebaseGate.auth(fragment.requireContext())?.currentUser?.uid
+    }
+
+    private fun usesCloud(fragment: Fragment): Boolean {
+        if (FirebaseGate.db(fragment.requireContext()) == null) return false
+        val role = BuyerSession.currentRole(fragment.requireContext())
+        return role == ShopUserStore.ROLE_SELLER || role == ShopUserStore.ROLE_ADMIN
     }
 
     fun render(
@@ -41,10 +66,10 @@ object ShopProductEditor {
         query: String
     ) {
         val ownerId = sellerId(fragment)
-        val products = if (ownerId == null) {
-            ShopCatalog.search(query)
-        } else {
-            MarketCatalog.search(ownerId, query)
+        val products = when {
+            ownerId != null -> MarketCatalog.search(ownerId, query)
+            usesCloud(fragment) -> MarketCatalog.searchAll(query)
+            else -> ShopCatalog.search(query)
         }
         container.removeAllViews()
         emptyView.visibility = if (products.isEmpty()) View.VISIBLE else View.GONE
@@ -77,7 +102,8 @@ object ShopProductEditor {
 
     fun showForm(fragment: Fragment, productId: String?, onSaved: () -> Unit) {
         val context = fragment.requireContext()
-        val cloud = sellerId(fragment) != null
+        val cloud = usesCloud(fragment)
+        var photoRequest = 0
         val product = productId?.let { id ->
             if (cloud) MarketCatalog.shopProduct(id) else ShopCatalog.productById(id)
         }
@@ -99,11 +125,12 @@ object ShopProductEditor {
         val buttonPhoto = form.findViewById<MaterialButton>(R.id.buttonPickPhoto)
         buttonPhoto.visibility = if (cloud) View.VISIBLE else View.GONE
         buttonPhoto.setOnClickListener {
-            photoCallback = { uri ->
+            photoRequest = beginPhoto { uri ->
+                if (!fragment.isAdded) return@beginPhoto
                 selectedPhoto = uri
                 buttonPhoto.text = fragment.getString(R.string.msg_photo_selected)
             }
-            (fragment as? SellerProductsFragment)?.launchPhotoPick()
+            (fragment as? ProductPhotoHost)?.launchPhotoPick()
         }
 
         if (product != null) {
@@ -193,10 +220,6 @@ object ShopProductEditor {
                 if (!valid || price == null || category == null || petType == null || stock == null) {
                     return@setOnClickListener
                 }
-                if (cloud && product == null && selectedPhoto == null) {
-                    Toast.makeText(context, R.string.msg_photo_required, Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
 
                 if (cloud) {
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
@@ -211,14 +234,17 @@ object ShopProductEditor {
                         stock = stock,
                         active = checkActive.isChecked,
                         photo = selectedPhoto
-                    ) { saved ->
-                        if (!saved) {
+                    ) { result ->
+                        if (result == MarketCatalog.ProductWrite.FAILED) {
                             Toast.makeText(context, R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
                             return@save
                         }
                         val message = if (product == null) R.string.msg_product_added else R.string.msg_product_updated
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        if (result == MarketCatalog.ProductWrite.SAVED_WITHOUT_PHOTO) {
+                            Toast.makeText(context, R.string.msg_photo_not_stored, Toast.LENGTH_LONG).show()
+                        }
                         onSaved()
                         dialog.dismiss()
                     }
@@ -253,6 +279,7 @@ object ShopProductEditor {
                 dialog.dismiss()
             }
         }
+        dialog.setOnDismissListener { cancelPhoto(photoRequest) }
         dialog.show()
     }
 
@@ -287,7 +314,7 @@ object ShopProductEditor {
             .setTitle(R.string.dialog_delete_product_title)
             .setMessage(fragment.getString(R.string.dialog_delete_product_message, product.name))
             .setPositiveButton(R.string.action_delete) { _, _ ->
-                if (sellerId(fragment) != null) {
+                if (usesCloud(fragment) && MarketCatalog.shopProduct(product.id) != null) {
                     MarketCatalog.remove(fragment.requireContext(), product.id) { removed ->
                         if (!removed) return@remove
                         Toast.makeText(

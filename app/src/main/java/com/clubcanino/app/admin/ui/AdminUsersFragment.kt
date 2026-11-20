@@ -167,6 +167,9 @@ class AdminUsersFragment : Fragment() {
                         ShopUserWrite.LAST_ADMIN -> {
                             layoutRole.error = getString(R.string.msg_user_last_admin)
                         }
+                        ShopUserWrite.NOT_CONFIGURED -> {
+                            Toast.makeText(requireContext(), R.string.msg_account_backend_missing, Toast.LENGTH_LONG).show()
+                        }
                         else -> {
                             Toast.makeText(requireContext(), R.string.msg_error_generic, Toast.LENGTH_SHORT).show()
                         }
@@ -210,6 +213,9 @@ class AdminUsersFragment : Fragment() {
                         }
                         ShopUserWrite.LAST_ADMIN -> {
                             Toast.makeText(requireContext(), R.string.msg_user_last_admin, Toast.LENGTH_SHORT).show()
+                        }
+                        ShopUserWrite.NOT_CONFIGURED -> {
+                            Toast.makeText(requireContext(), R.string.msg_account_backend_missing, Toast.LENGTH_LONG).show()
                         }
                         else -> {
                             Toast.makeText(requireContext(), R.string.msg_error_generic, Toast.LENGTH_SHORT).show()

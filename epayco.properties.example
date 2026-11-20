@@ -1,0 +1,2 @@
+# Las llaves de ePayco no van en la aplicación Android.
+# Colócalas en backend/.env, en el servidor, y no en este proyecto móvil.

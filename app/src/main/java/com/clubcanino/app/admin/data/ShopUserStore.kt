@@ -2,6 +2,7 @@ package com.clubcanino.app.admin.data
 
 import android.content.Context
 import com.clubcanino.app.auth.FirebaseGate
+import com.clubcanino.app.buyer.ui.ClubBackend
 import com.clubcanino.app.buyer.data.BuyerSession
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.SetOptions
@@ -15,6 +16,7 @@ enum class ShopUserWrite {
     FAILED
 }
 
+/** Usuarios en Firestore. Comprador y vendedor se crean en el cliente; el administrador, el correo, el rol y el borrado pasan por el backend. */
 object ShopUserStore {
 
     const val ROLE_BUYER = "Comprador"
@@ -113,11 +115,8 @@ object ShopUserStore {
         fullName: String,
         email: String,
         password: String,
-        role: String,
-        storeName: String,
         onResult: (ShopUserWrite) -> Unit
     ) {
-        val safeRole = if (role == ROLE_SELLER) ROLE_SELLER else ROLE_BUYER
         val auth = FirebaseGate.auth(context) ?: return onResult(ShopUserWrite.NOT_CONFIGURED)
         auth.createUserWithEmailAndPassword(email.trim(), password)
             .addOnSuccessListener { result ->
@@ -133,8 +132,8 @@ object ShopUserStore {
                         fullName = fullName.trim(),
                         email = email.trim(),
                         phone = DEFAULT_PHONE,
-                        role = safeRole,
-                        storeName = if (safeRole == ROLE_SELLER) storeName.trim() else ""
+                        role = ROLE_BUYER,
+                        storeName = ""
                     ),
                     onResult = onResult
                 )
@@ -166,20 +165,45 @@ object ShopUserStore {
         password: String,
         onResult: (ShopUserWrite) -> Unit
     ) {
+        if (role == ROLE_ADMIN) {
+            if (!ClubBackend.isConfigured()) return onResult(ShopUserWrite.NOT_CONFIGURED)
+            ClubBackend.createAccount(context, fullName, email, phone, role, password) { code, error, uid ->
+                if (code in 200..299 && uid.isNotBlank()) {
+                    remember(ShopUser(uid, fullName.trim(), email.trim(), phone.trim(), role, ""))
+                    onResult(ShopUserWrite.SAVED)
+                } else {
+                    onResult(accountResult(code, error, null))
+                }
+            }
+            return
+        }
         val auth = FirebaseGate.accountAuth(context) ?: return onResult(ShopUserWrite.NOT_CONFIGURED)
         auth.createUserWithEmailAndPassword(email.trim(), password)
             .addOnSuccessListener { result ->
-                val uid = result.user?.uid
-                auth.signOut()
-                if (uid.isNullOrBlank()) {
+                val created = result.user
+                val uid = created?.uid
+                if (created == null || uid.isNullOrBlank()) {
+                    auth.signOut()
                     onResult(ShopUserWrite.FAILED)
                     return@addOnSuccessListener
                 }
                 writeUser(
                     context,
-                    ShopUser(uid, fullName.trim(), email.trim(), phone.trim(), role, ""),
-                    onResult
-                )
+                    ShopUser(uid, fullName.trim(), email.trim(), phone.trim(), role, "")
+                ) { written ->
+                    if (written == ShopUserWrite.SAVED) {
+                        auth.signOut()
+                        onResult(ShopUserWrite.SAVED)
+                        return@writeUser
+                    }
+                    // Authentication y Firestore no comparten una transacción. Se borra
+                    // solo el usuario recién creado, en la app secundaria, para no dejar
+                    // una cuenta sin documento ni cerrar la sesión del administrador.
+                    created.delete().addOnCompleteListener {
+                        auth.signOut()
+                        onResult(ShopUserWrite.FAILED)
+                    }
+                }
             }
             .addOnFailureListener { error ->
                 auth.signOut()
@@ -214,24 +238,45 @@ object ShopUserStore {
             phone = phone.trim(),
             role = role
         )
-        writeUser(context, updated) { result ->
-            if (result == ShopUserWrite.SAVED && !newPassword.isNullOrBlank()) {
-                FirebaseGate.auth(context)?.sendPasswordResetEmail(updated.email)
+        val emailChanged = !current.email.equals(updated.email, ignoreCase = true)
+        val roleChanged = current.role != updated.role
+        val password = newPassword?.takeIf { it.isNotBlank() }.orEmpty()
+        // El rol, el correo y la contraseña los confirma el backend. Nombre y
+        // teléfono, con el mismo rol, siguen guardándose directo en Firestore.
+        if (emailChanged || password.isNotEmpty() || roleChanged) {
+            if (!ClubBackend.isConfigured()) {
+                onResult(ShopUserWrite.NOT_CONFIGURED)
+                return
             }
-            onResult(result)
+            ClubBackend.updateAccount(
+                context = context,
+                uid = id,
+                fullName = updated.fullName,
+                email = updated.email,
+                phone = updated.phone,
+                role = updated.role,
+                storeName = updated.storeName,
+                password = password
+            ) { code, error ->
+                onResult(accountResult(code, error, updated))
+            }
+            return
         }
+        writeUser(context, updated, onResult)
     }
 
     fun remove(context: Context, id: String, onResult: (ShopUserWrite) -> Unit) {
         val user = usersInternal.find { it.id == id } ?: return onResult(ShopUserWrite.NOT_FOUND)
         if (user.role == ROLE_ADMIN && adminCount() <= 1) return onResult(ShopUserWrite.LAST_ADMIN)
-        val db = FirebaseGate.db(context) ?: return onResult(ShopUserWrite.NOT_CONFIGURED)
-        db.collection(USERS).document(id).delete()
-            .addOnSuccessListener {
+        if (!ClubBackend.isConfigured()) return onResult(ShopUserWrite.NOT_CONFIGURED)
+        ClubBackend.deleteAccount(context, id) { code, error ->
+            if (code in 200..299) {
                 usersInternal.removeAll { it.id == id }
                 onResult(ShopUserWrite.SAVED)
+            } else {
+                onResult(accountResult(code, error, null))
             }
-            .addOnFailureListener { onResult(ShopUserWrite.FAILED) }
+        }
     }
 
     fun saveStoreProfile(context: Context, fullName: String, phone: String, storeName: String) {
@@ -260,6 +305,19 @@ object ShopUserStore {
                 onResult(ShopUserWrite.SAVED)
             }
             .addOnFailureListener { onResult(ShopUserWrite.FAILED) }
+    }
+
+    private fun accountResult(code: Int, error: String, updated: ShopUser?): ShopUserWrite {
+        if (code in 200..299 && updated != null) {
+            remember(updated)
+            return ShopUserWrite.SAVED
+        }
+        return when (error) {
+            "last_admin" -> ShopUserWrite.LAST_ADMIN
+            "duplicate_email" -> ShopUserWrite.DUPLICATE_EMAIL
+            "not_configured", "backend_not_configured" -> ShopUserWrite.NOT_CONFIGURED
+            else -> ShopUserWrite.FAILED
+        }
     }
 
     private fun remember(user: ShopUser) {

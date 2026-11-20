@@ -3,7 +3,6 @@ package com.clubcanino.app.auth
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
-import android.widget.RadioButton
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -29,9 +28,6 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var editEmail: TextInputEditText
     private lateinit var editPassword: TextInputEditText
     private lateinit var editConfirmPassword: TextInputEditText
-    private lateinit var inputLayoutStoreName: TextInputLayout
-    private lateinit var editStoreName: TextInputEditText
-    private lateinit var radioSeller: RadioButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +43,6 @@ class RegisterActivity : AppCompatActivity() {
         editEmail = findViewById(R.id.editEmail)
         editPassword = findViewById(R.id.editPassword)
         editConfirmPassword = findViewById(R.id.editConfirmPassword)
-        inputLayoutStoreName = findViewById(R.id.inputLayoutStoreName)
-        editStoreName = findViewById(R.id.editStoreName)
-        radioSeller = findViewById(R.id.radioSeller)
-        findViewById<RadioButton>(R.id.radioBuyer).setOnClickListener { updateStoreField() }
-        radioSeller.setOnClickListener { updateStoreField() }
 
         findViewById<MaterialButton>(R.id.buttonRegister).setOnClickListener { attemptRegister() }
         findViewById<MaterialButton>(R.id.buttonGoLogin).setOnClickListener {
@@ -66,8 +57,6 @@ class RegisterActivity : AppCompatActivity() {
         val email = editEmail.text?.toString()?.trim().orEmpty()
         val password = editPassword.text?.toString().orEmpty()
         val confirmPassword = editConfirmPassword.text?.toString().orEmpty()
-        val seller = radioSeller.isChecked
-        val storeName = editStoreName.text?.toString()?.trim().orEmpty()
         var isValid = true
 
         if (AuthValidator.isBlank(name)) {
@@ -99,25 +88,19 @@ class RegisterActivity : AppCompatActivity() {
             isValid = false
         }
 
-        if (seller && storeName.isEmpty()) {
-            inputLayoutStoreName.error = getString(R.string.error_field_required)
-            isValid = false
-        }
-
         if (!isValid) return
         if (!FirebaseGate.isReady(this)) {
             Toast.makeText(this, R.string.msg_firebase_missing, Toast.LENGTH_LONG).show()
             return
         }
 
-        val role = if (seller) ShopUserStore.ROLE_SELLER else ShopUserStore.ROLE_BUYER
         findViewById<MaterialButton>(R.id.buttonRegister).isEnabled = false
-        ShopUserStore.register(this, name, email, password, role, storeName) { result ->
+        ShopUserStore.register(this, name, email, password) { result ->
             findViewById<MaterialButton>(R.id.buttonRegister).isEnabled = true
             when (result) {
                 ShopUserWrite.SAVED -> {
-                    BuyerSession.start(this, email, role)
-                    RoleNavigator.openRoleHome(this, RoleNavigator.roleOf(role))
+                    BuyerSession.start(this, email, ShopUserStore.ROLE_BUYER)
+                    RoleNavigator.openRoleHome(this, RoleNavigator.roleOf(ShopUserStore.ROLE_BUYER))
                     finish()
                 }
                 ShopUserWrite.DUPLICATE_EMAIL -> {
@@ -131,11 +114,6 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun updateStoreField() {
-        inputLayoutStoreName.visibility = if (radioSeller.isChecked) View.VISIBLE else View.GONE
-        if (!radioSeller.isChecked) inputLayoutStoreName.error = null
     }
 
     private fun keepFocusedFieldVisible(scroll: ScrollView) {
@@ -160,6 +138,5 @@ class RegisterActivity : AppCompatActivity() {
         inputLayoutEmail.error = null
         inputLayoutPassword.error = null
         inputLayoutConfirmPassword.error = null
-        inputLayoutStoreName.error = null
     }
 }

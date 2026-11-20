@@ -1,0 +1,4 @@
+# URL HTTPS del backend. El teléfono no puede usar localhost ni la IP del emulador.
+# Se copia a backend.properties, que no se sube a Git, y la app se vuelve a compilar.
+# No escribas aquí llaves de ePayco ni la cuenta de servicio.
+BACKEND_BASE_URL=

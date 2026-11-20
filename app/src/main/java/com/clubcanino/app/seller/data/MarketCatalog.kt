@@ -10,9 +10,20 @@ import com.clubcanino.app.auth.FirebaseGate
 import com.clubcanino.app.buyer.data.BuyerSession
 import com.clubcanino.app.buyer.data.Product
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.StorageMetadata
 import java.io.ByteArrayOutputStream
 
+/**
+ * Catálogo de productos en Firestore. La foto se intenta guardar en Storage;
+ * si ese servicio no acepta el archivo, el producto igual queda guardado.
+ */
 object MarketCatalog {
+
+    enum class ProductWrite {
+        SAVED,
+        SAVED_WITHOUT_PHOTO,
+        FAILED
+    }
 
     private val products = mutableListOf<ShopProduct>()
 
@@ -72,6 +83,23 @@ object MarketCatalog {
 
     fun product(id: String): Product? = products.find { it.id == id }?.toProduct()
 
+    fun searchAll(query: String): List<ShopProduct> = filterQuery(products, query)
+
+    fun activeCount(sellerId: String?): Int = scoped(sellerId).count { it.active }
+
+    fun lowStockCount(sellerId: String?): Int =
+        scoped(sellerId).count { it.active && it.stock in 0..3 }
+
+    private fun scoped(sellerId: String?): List<ShopProduct> =
+        if (sellerId.isNullOrBlank()) products else products.filter { it.sellerId == sellerId }
+
+    private fun filterQuery(source: List<ShopProduct>, query: String): List<ShopProduct> {
+        val q = query.trim().lowercase()
+        return source.filter { product ->
+            q.isEmpty() || product.name.lowercase().contains(q) || product.description.lowercase().contains(q)
+        }
+    }
+
     fun search(sellerId: String, query: String): List<ShopProduct> {
         val q = query.trim().lowercase()
         return products.filter { product ->
@@ -93,21 +121,29 @@ object MarketCatalog {
         stock: Int,
         active: Boolean,
         photo: Uri?,
-        onResult: (Boolean) -> Unit
+        onResult: (ProductWrite) -> Unit
     ) {
-        val db = FirebaseGate.db(context) ?: return onResult(false)
-        val uid = FirebaseGate.auth(context)?.currentUser?.uid ?: return onResult(false)
+        val db = FirebaseGate.db(context) ?: return onResult(ProductWrite.FAILED)
+        val authUid = FirebaseGate.auth(context)?.currentUser?.uid ?: return onResult(ProductWrite.FAILED)
         ShopUserStore.loadCurrent(context) {
+            val existing = existingId?.let { shopProduct(it) }
+            val adminEditing = BuyerSession.currentRole(context) == ShopUserStore.ROLE_ADMIN && existing != null
+            val sellerId = if (adminEditing) existing?.sellerId.orEmpty().ifBlank { authUid } else authUid
             val email = BuyerSession.currentEmail(context).orEmpty()
-            val storeName = ShopUserStore.findByEmail(email)?.storeName.orEmpty().ifBlank { "Mi tienda" }
-            saveWithStore(context, db, uid, storeName, existingId, name, description, price, category, petType, stock, active, photo, onResult)
+            val storeName = if (adminEditing) {
+                existing?.storeName.orEmpty().ifBlank { "Club Canino" }
+            } else {
+                ShopUserStore.findByEmail(email)?.storeName.orEmpty().ifBlank { "Mi tienda" }
+            }
+            saveWithStore(context, db, authUid, sellerId, storeName, existingId, name, description, price, category, petType, stock, active, photo, onResult)
         }
     }
 
     private fun saveWithStore(
         context: Context,
         db: com.google.firebase.firestore.FirebaseFirestore,
-        uid: String,
+        authUid: String,
+        sellerId: String,
         storeName: String,
         existingId: String?,
         name: String,
@@ -118,37 +154,88 @@ object MarketCatalog {
         stock: Int,
         active: Boolean,
         photo: Uri?,
-        onResult: (Boolean) -> Unit
+        onResult: (ProductWrite) -> Unit
     ) {
         val id = existingId ?: db.collection(PRODUCTS).document().id
         val current = products.find { it.id == id }
+        fun finish(saved: Boolean, withoutPhoto: Boolean) {
+            onResult(
+                when {
+                    !saved -> ProductWrite.FAILED
+                    withoutPhoto -> ProductWrite.SAVED_WITHOUT_PHOTO
+                    else -> ProductWrite.SAVED
+                }
+            )
+        }
         if (photo == null && current?.photoUrl.isNullOrBlank()) {
-            onResult(false)
+            writeProduct(
+                context, id, sellerId, storeName, name, description, price, category,
+                petType, stock, active, ""
+            ) { finish(it, false) }
             return
         }
         if (photo == null) {
-            writeProduct(context, id, uid, storeName, name, description, price, category, petType, stock, active, current?.photoUrl.orEmpty(), onResult)
+            writeProduct(
+                context, id, sellerId, storeName, name, description, price, category,
+                petType, stock, active, current?.photoUrl.orEmpty()
+            ) { finish(it, false) }
             return
         }
-        val bytes = jpegBytes(context, photo) ?: return onResult(false)
-        val storage = FirebaseGate.storage(context) ?: return onResult(false)
-        val ref = storage.reference.child("products/$uid/$id.jpg")
-        ref.putBytes(bytes)
-            .continueWithTask { ref.downloadUrl }
-            .addOnSuccessListener { url ->
-                writeProduct(context, id, uid, storeName, name, description, price, category, petType, stock, active, url.toString(), onResult)
+        val previousPhoto = current?.photoUrl.orEmpty()
+        val bytes = jpegBytes(context, photo)
+        val storage = FirebaseGate.storage(context)
+        if (bytes == null || storage == null) {
+            writeProduct(
+                context, id, sellerId, storeName, name, description, price, category,
+                petType, stock, active, previousPhoto
+            ) { finish(it, true) }
+            return
+        }
+        val ref = storage.reference.child("products/$authUid/$id.jpg")
+        val metadata = StorageMetadata.Builder().setContentType("image/jpeg").build()
+        ref.putBytes(bytes, metadata)
+            .continueWithTask { task ->
+                if (!task.isSuccessful) throw task.exception ?: IllegalStateException("upload")
+                ref.downloadUrl
             }
-            .addOnFailureListener { onResult(false) }
+            .addOnSuccessListener { url ->
+                val photoUrl = url.toString()
+                if (!photoUrl.startsWith("https://")) {
+                    writeProduct(
+                        context, id, sellerId, storeName, name, description, price, category,
+                        petType, stock, active, previousPhoto
+                    ) { finish(it, true) }
+                    return@addOnSuccessListener
+                }
+                writeProduct(
+                    context, id, sellerId, storeName, name, description, price, category,
+                    petType, stock, active, photoUrl
+                ) { finish(it, false) }
+            }
+            .addOnFailureListener {
+                writeProduct(
+                    context, id, sellerId, storeName, name, description, price, category,
+                    petType, stock, active, previousPhoto
+                ) { finish(it, true) }
+            }
     }
 
     fun remove(context: Context, id: String, onResult: (Boolean) -> Unit) {
         val db = FirebaseGate.db(context) ?: return onResult(false)
+        val photoUrl = products.find { it.id == id }?.photoUrl.orEmpty()
         db.collection(PRODUCTS).document(id).delete()
             .addOnSuccessListener {
                 products.removeAll { it.id == id }
+                deleteStoredPhoto(context, photoUrl)
                 onResult(true)
             }
             .addOnFailureListener { onResult(false) }
+    }
+
+    private fun deleteStoredPhoto(context: Context, photoUrl: String) {
+        val path = ProductPhotoPath.fromDownloadUrl(photoUrl) ?: return
+        val storage = FirebaseGate.storage(context) ?: return
+        storage.reference.child(path).delete()
     }
 
     private fun writeProduct(

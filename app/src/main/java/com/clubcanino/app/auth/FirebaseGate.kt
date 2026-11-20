@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
+/** Punto de acceso a Authentication, Firestore y Storage. La app secundaria crea cuentas sin cerrar al administrador. */
 object FirebaseGate {
 
     fun isReady(context: Context): Boolean {

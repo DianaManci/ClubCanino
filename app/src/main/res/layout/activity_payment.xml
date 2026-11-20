@@ -160,6 +160,36 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="@string/payment_address_title"
+                            android:textColor="@color/buyer_text"
+                            android:textSize="@dimen/text_body"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textDeliveryAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs"
+                            android:text="@string/payment_location_waiting"
+                            android:textColor="@color/buyer_text_muted"
+                            android:textSize="@dimen/text_medium" />
+
+                        <EditText
+                            android:id="@+id/editManualAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_sm"
+                            android:layout_marginBottom="@dimen/spacing_md"
+                            android:hint="@string/payment_address_manual_hint"
+                            android:inputType="textPostalAddress"
+                            android:minHeight="48dp"
+                            android:textColor="@color/buyer_text"
+                            android:textColorHint="@color/buyer_text_muted"
+                            android:textSize="@dimen/text_medium" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:text="@string/payment_method_title"
                             android:textColor="@color/buyer_text"
                             android:textSize="@dimen/text_body"
