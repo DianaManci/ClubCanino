@@ -42,6 +42,11 @@ object ProductViews {
 
         val badge = view.findViewById<TextView>(R.id.textBadge)
         when {
+            !product.available -> {
+                badge.visibility = View.VISIBLE
+                badge.text = view.context.getString(R.string.badge_sold_out)
+                badge.setBackgroundResource(R.drawable.bg_buyer_badge_sold_out)
+            }
             product.onPromotion -> {
                 badge.visibility = View.VISIBLE
                 badge.text = view.context.getString(R.string.badge_offer)

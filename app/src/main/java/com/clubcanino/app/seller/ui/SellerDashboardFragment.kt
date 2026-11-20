@@ -72,7 +72,11 @@ class SellerDashboardFragment : Fragment() {
                     StaffStat(R.string.seller_stat_products, MarketCatalog.activeCount(sellerId).toString(), R.drawable.ic_stat_box),
                     StaffStat(R.string.seller_stat_orders, ShopOrders.visibleActive(requireContext()).size.toString(), R.drawable.ic_stat_clipboard),
                     StaffStat(R.string.seller_stat_sales, MoneyFormat.format(ShopOrders.deliveredRevenueFor(requireContext())), R.drawable.ic_stat_chart),
-                    StaffStat(R.string.seller_stat_low_stock, MarketCatalog.lowStockCount(sellerId).toString(), R.drawable.ic_stat_warning)
+                    StaffStat(
+                        R.string.seller_stat_stock_level,
+                        "${MarketCatalog.stockLevelPercent(sellerId)}%",
+                        R.drawable.ic_stat_warning
+                    )
                 )
             )
         }

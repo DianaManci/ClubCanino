@@ -159,6 +159,7 @@
     <string name="buyer_quick_profile">Mi Perfil</string>
     <string name="badge_offer">Oferta</string>
     <string name="badge_new">Nuevo</string>
+    <string name="badge_sold_out">Agotado</string>
     <string name="cd_open_cart">Abrir carrito</string>
     <string name="cd_add_to_cart">Agregar al carrito</string>
     <string name="cd_hero_banner">Perro y gato de Club Canino</string>
@@ -184,7 +185,7 @@
         La compra de demostración está lista en el carrito. El pago real se integrará en una etapa posterior.
     </string>
     <string name="payment_title">Pago</string>
-    <string name="payment_subtitle">Confirma la dirección de entrega y continúa con ePayco en modo de prueba.</string>
+    <string name="payment_subtitle">Confirma la dirección de entrega y el método de pago.</string>
     <string name="payment_header_subtitle">Entrega y pago</string>
     <string name="payment_address_title">Dirección de entrega</string>
     <string name="payment_location_waiting">Buscando tu ubicación…</string>
@@ -201,6 +202,7 @@
     <string name="payment_epayco_confirmed">ePayco confirmó la transacción %1$s.</string>
     <string name="payment_epayco_rejected">El pago no fue confirmado.</string>
     <string name="payment_epayco_error">No se pudo abrir ePayco. Revisa las llaves y la conexión. La compra no quedó pagada.</string>
+    <string name="payment_epayco_opening">Abriendo el pago de prueba…</string>
     <string name="payment_order_saved_unpaid">El pedido quedó pendiente. El pago no se confirmó, así que la compra no está pagada.</string>
     <string name="payment_order_denied">No se pudo guardar el pedido con tu sesión. No se registró un pago.</string>
     <string name="payment_order_index">Falta el índice de pedidos en Firestore. No se registró un pago.</string>
@@ -235,7 +237,12 @@
     <string name="action_back_to_store">Volver a la tienda</string>
     <string name="buyer_pets_title">Mis mascotas</string>
     <string name="buyer_orders_title">Historial de pedidos</string>
-    <string name="buyer_orders_empty">Aún no tienes pedidos confirmados.</string>
+    <string name="buyer_orders_empty">Aún no tienes pedidos.</string>
+    <string name="buyer_orders_pending">Pendientes</string>
+    <string name="buyer_orders_progress">En proceso</string>
+    <string name="buyer_orders_delivered">Entregados</string>
+    <string name="buyer_orders_cancelled">Cancelados</string>
+    <string name="buyer_orders_section_empty">No hay pedidos en esta sección.</string>
     <string name="action_add_pet">Agregar mascota</string>
     <string name="action_edit_pet">Editar mascota</string>
     <string name="hint_pet_name">Nombre</string>
@@ -306,6 +313,7 @@
     <string name="seller_stat_orders">Pedidos por gestionar</string>
     <string name="seller_stat_sales">Ventas entregadas</string>
     <string name="seller_stat_low_stock">Stock bajo</string>
+    <string name="seller_stat_stock_level">Nivel de stock</string>
     <string name="action_open_products">Ir a productos</string>
     <string name="action_open_orders">Ir a pedidos</string>
     <string name="hint_store_name">Nombre de la tienda</string>
@@ -324,7 +332,9 @@
     <string name="seller_header_subtitle">Tienda y Ventas</string>
     <string name="admin_header_subtitle">Panel Administrativo</string>
     <string name="action_return_home">Inicio</string>
+    <string name="action_sign_out">Cerrar sesión</string>
     <string name="cd_return_roles">Volver a elegir rol</string>
+    <string name="cd_sign_out">Cerrar sesión</string>
     <string name="seller_quick_access">Accesos rápidos</string>
     <string name="seller_banner_message">¡Tu tienda, siempre en buenas manos!</string>
     <string name="admin_banner_title">Club Canino</string>

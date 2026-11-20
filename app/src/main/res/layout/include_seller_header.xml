@@ -10,34 +10,6 @@
     android:paddingEnd="@dimen/spacing_lg"
     android:paddingBottom="20dp">
 
-    <LinearLayout
-        android:id="@+id/buttonReturnRoles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:contentDescription="@string/cd_return_roles"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="6dp">
-
-        <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:contentDescription="@null"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_nav_home"
-            android:tint="@color/white" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/action_return_home"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_tiny" />
-    </LinearLayout>
-
     <ImageView
         android:layout_width="32dp"
         android:layout_height="32dp"

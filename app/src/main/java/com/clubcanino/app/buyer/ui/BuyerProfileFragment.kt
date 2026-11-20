@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
 import com.clubcanino.app.buyer.data.BuyerDemoData
 import com.clubcanino.app.buyer.data.Pet
+import com.clubcanino.app.seller.data.BuyerOrderSection
+import com.clubcanino.app.seller.data.ShopOrder
 import com.clubcanino.app.seller.data.ShopOrders
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -137,6 +139,41 @@ class BuyerProfileFragment : Fragment() {
                 text = getString(R.string.buyer_orders_empty)
                 setTextAppearance(R.style.TextAppearance_ClubCanino_Body_Secondary)
                 setTextColor(ContextCompat.getColor(context, R.color.buyer_text_muted))
+            }
+            ordersContainer.addView(empty)
+            return
+        }
+        listOf(
+            BuyerOrderSection.PENDING to R.string.buyer_orders_pending,
+            BuyerOrderSection.IN_PROGRESS to R.string.buyer_orders_progress,
+            BuyerOrderSection.DELIVERED to R.string.buyer_orders_delivered,
+            BuyerOrderSection.CANCELLED to R.string.buyer_orders_cancelled
+        ).forEach { (section, title) ->
+            addOrderSection(inflater, title, orders.filter { it.buyerSection() == section })
+        }
+    }
+
+    private fun addOrderSection(inflater: LayoutInflater, title: Int, orders: List<ShopOrder>) {
+        val heading = TextView(requireContext()).apply {
+            text = getString(title)
+            setTextColor(ContextCompat.getColor(context, R.color.buyer_text))
+            setTextSize(
+                android.util.TypedValue.COMPLEX_UNIT_PX,
+                resources.getDimension(R.dimen.text_body)
+            )
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            val top = resources.getDimensionPixelSize(R.dimen.spacing_md)
+            setPadding(0, top, 0, resources.getDimensionPixelSize(R.dimen.spacing_xs))
+        }
+        ordersContainer.addView(heading)
+        if (orders.isEmpty()) {
+            val empty = TextView(requireContext()).apply {
+                text = getString(R.string.buyer_orders_section_empty)
+                setTextColor(ContextCompat.getColor(context, R.color.buyer_text_muted))
+                setTextSize(
+                    android.util.TypedValue.COMPLEX_UNIT_PX,
+                    resources.getDimension(R.dimen.text_caption)
+                )
             }
             ordersContainer.addView(empty)
             return

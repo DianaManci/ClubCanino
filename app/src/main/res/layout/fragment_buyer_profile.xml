@@ -173,6 +173,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
                 android:orientation="vertical" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonReturnRoles"
+                style="@style/Widget.ClubCanino.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xl"
+                android:contentDescription="@string/cd_sign_out"
+                android:text="@string/action_sign_out"
+                android:textAllCaps="false"
+                android:textColor="@color/buyer_forest"
+                app:cornerRadius="24dp"
+                app:strokeColor="@color/buyer_forest" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

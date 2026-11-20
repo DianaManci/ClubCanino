@@ -24,6 +24,39 @@ object ClubBackend {
             url.startsWith("http://localhost")
     }
 
+    fun paymentAvailability(onResult: (Boolean, String) -> Unit) {
+        if (!isConfigured()) {
+            onResult(false, "backend_not_configured")
+            return
+        }
+        Thread {
+            val outcome = try {
+                val connection = URL(baseUrl() + "/v1/health").openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connectTimeout = 20000
+                connection.readTimeout = 20000
+                val code = connection.responseCode
+                val text = connection.inputStream?.bufferedReader()?.use { it.readText() }.orEmpty()
+                val body = if (text.isBlank()) null else JSONObject(text)
+                if (code !in 200..299 || body == null) {
+                    false to "network"
+                } else if (body.optBoolean("payments")) {
+                    true to ""
+                } else {
+                    val missing = body.optJSONArray("missing")
+                    val keysMissing = missing != null &&
+                        (0 until missing.length()).any { missing.optString(it) == "epayco_keys" }
+                    false to if (keysMissing) "epayco_keys" else "backend_not_configured"
+                }
+            } catch (_: Exception) {
+                false to "network"
+            }
+            android.os.Handler(android.os.Looper.getMainLooper()).post {
+                onResult(outcome.first, outcome.second)
+            }
+        }.start()
+    }
+
     fun createSession(context: Context, orderId: String, onResult: (Session?, String) -> Unit) {
         authorized(context) { token ->
             if (token == null) {

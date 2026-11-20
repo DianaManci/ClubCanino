@@ -70,7 +70,7 @@ object CartStore {
 
     fun add(product: Product, quantity: Int = 1) {
         val items = activeItems()
-        if (activeUid.isEmpty()) return
+        if (activeUid.isEmpty() || !product.available || product.stock <= 0) return
         val safeQty = quantity.coerceAtLeast(1)
         val existing = items[product.id]
         if (existing == null) {

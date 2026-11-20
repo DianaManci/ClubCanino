@@ -6,6 +6,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.Gravity
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceError
@@ -38,8 +42,8 @@ class EpaycoActivity : AppCompatActivity() {
             close(false, "")
             return
         }
+        showOpening()
         val webView = WebView(this)
-        setContentView(webView)
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.settings.javaScriptCanOpenWindowsAutomatically = true
@@ -72,6 +76,7 @@ class EpaycoActivity : AppCompatActivity() {
                 close(false, "")
             } else {
                 armTimeout(CHECKOUT_WAIT_MS)
+                setContentView(webView)
                 webView.loadDataWithBaseURL(
                     "https://checkout.epayco.co/",
                     checkoutPage(session.sessionId),
@@ -93,8 +98,27 @@ class EpaycoActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    private fun showOpening() {
+        val screen = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setBackgroundColor(getColor(R.color.buyer_cream))
+            val pad = resources.getDimensionPixelSize(R.dimen.screen_padding_horizontal)
+            setPadding(pad, pad, pad, pad)
+        }
+        val label = TextView(this).apply {
+            text = getString(R.string.payment_epayco_opening)
+            setTextColor(getColor(R.color.buyer_text))
+            gravity = Gravity.CENTER
+            setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.text_medium))
+        }
+        screen.addView(ProgressBar(this))
+        screen.addView(label)
+        setContentView(screen)
+    }
+
     private fun messageForCheckoutError(error: String): Int = when (error) {
-        "backend_not_configured" -> R.string.payment_epayco_error
+        "epayco_keys", "backend_not_configured" -> R.string.payment_order_saved_unpaid
         "network", "unauthorized" -> R.string.payment_order_network
         else -> R.string.payment_epayco_error
     }

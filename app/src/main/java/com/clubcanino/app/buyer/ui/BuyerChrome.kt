@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.clubcanino.app.R
 import com.clubcanino.app.buyer.BuyerMainActivity
 import com.clubcanino.app.buyer.data.CartStore
+import com.clubcanino.app.navigation.RoleChrome
 import com.google.android.material.button.MaterialButton
 
 object BuyerChrome {
@@ -49,6 +50,8 @@ class BuyerHeaderBinder(
     private val listener: () -> Unit = { refreshBadge() }
 
     fun bind() {
+        val activity = fragment.activity
+        if (activity != null) RoleChrome.bindReturnToRoles(root, activity)
         root.findViewById<View>(R.id.buttonHeaderCart).setOnClickListener {
             (fragment.activity as? BuyerMainActivity)?.openCart()
         }

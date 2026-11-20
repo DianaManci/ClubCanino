@@ -266,10 +266,38 @@ class PaymentActivity : AppCompatActivity() {
             }
             pendingOrderId = orderId
             if (cardCheckout) {
-                epaycoPayment.launch(EpaycoActivity.createIntent(this, orderId))
+                openCardCheckout(orderId, token)
             } else {
                 registerUnpaidOrder(orderId)
             }
+        }
+    }
+
+    private fun openCardCheckout(orderId: String, token: Int) {
+        placing = true
+        findViewById<MaterialButton>(R.id.buttonConfirmPurchase).isEnabled = false
+        checkoutTimeout.removeCallbacksAndMessages(null)
+        checkoutTimeout.postDelayed({
+            if (token != attemptToken || !alive()) return@postDelayed
+            attemptToken++
+            placing = false
+            findViewById<MaterialButton>(R.id.buttonConfirmPurchase).isEnabled = true
+            Toast.makeText(this, R.string.payment_order_timeout, Toast.LENGTH_LONG).show()
+        }, ORDER_TIMEOUT_MS)
+        ClubBackend.paymentAvailability { ready, error ->
+            if (!alive() || token != attemptToken) return@paymentAvailability
+            checkoutTimeout.removeCallbacksAndMessages(null)
+            placing = false
+            if (!ready) {
+                if (error == "network" || error == "unauthorized") {
+                    findViewById<MaterialButton>(R.id.buttonConfirmPurchase).isEnabled = true
+                    Toast.makeText(this, R.string.payment_order_network, Toast.LENGTH_LONG).show()
+                    return@paymentAvailability
+                }
+                registerUnpaidOrder(orderId)
+                return@paymentAvailability
+            }
+            epaycoPayment.launch(EpaycoActivity.createIntent(this, orderId))
         }
     }
 
@@ -287,7 +315,7 @@ class PaymentActivity : AppCompatActivity() {
         "permission" -> R.string.payment_order_denied
         "index" -> R.string.payment_order_index
         "network", "unauthorized" -> R.string.payment_order_network
-        "backend_not_configured", "epayco" -> R.string.payment_epayco_error
+        "epayco" -> R.string.payment_epayco_error
         "timeout" -> R.string.payment_order_timeout
         "data" -> R.string.msg_error_generic
         else -> R.string.payment_order_saved_unpaid

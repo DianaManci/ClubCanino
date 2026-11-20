@@ -44,6 +44,26 @@ data class ShopOrder(
         get() = ShopOrderStatus.isHistory(status) ||
             paymentStatus == ShopOrderStatus.PAYMENT_REJECTED ||
             paymentStatus == ShopOrderStatus.PAYMENT_CANCELLED
+
+    fun buyerSection(): BuyerOrderSection {
+        if (
+            status == ShopOrderStatus.CANCELLED ||
+            paymentStatus == ShopOrderStatus.PAYMENT_REJECTED ||
+            paymentStatus == ShopOrderStatus.PAYMENT_CANCELLED
+        ) {
+            return BuyerOrderSection.CANCELLED
+        }
+        if (!isPaid || status == ShopOrderStatus.PENDING) return BuyerOrderSection.PENDING
+        if (status == ShopOrderStatus.DELIVERED) return BuyerOrderSection.DELIVERED
+        return BuyerOrderSection.IN_PROGRESS
+    }
+}
+
+enum class BuyerOrderSection {
+    PENDING,
+    IN_PROGRESS,
+    DELIVERED,
+    CANCELLED
 }
 
 object ShopOrderStatus {

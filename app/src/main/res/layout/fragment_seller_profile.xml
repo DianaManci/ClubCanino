@@ -140,6 +140,19 @@
                 android:text="@string/seller_profile_demo_notice"
                 android:textColor="@color/buyer_text_muted"
                 android:textSize="@dimen/text_caption" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonReturnRoles"
+                style="@style/Widget.ClubCanino.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_lg"
+                android:contentDescription="@string/cd_sign_out"
+                android:text="@string/action_sign_out"
+                android:textAllCaps="false"
+                android:textColor="@color/buyer_forest"
+                app:cornerRadius="24dp"
+                app:strokeColor="@color/buyer_forest" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

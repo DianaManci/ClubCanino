@@ -26,6 +26,7 @@ object MarketCatalog {
     }
 
     private val products = mutableListOf<ShopProduct>()
+    const val LOW_STOCK_MAX = 3
 
     fun refresh(context: Context, onReady: () -> Unit) {
         val db = FirebaseGate.db(context)
@@ -62,9 +63,11 @@ object MarketCatalog {
             .addOnFailureListener { onReady() }
     }
 
-    fun forBuyer(category: String, query: String): List<Product> {
+    fun forBuyer(category: String, query: String): List<Product> = visibleToBuyer(products, category, query)
+
+    fun visibleToBuyer(source: List<ShopProduct>, category: String, query: String): List<Product> {
         val q = query.trim().lowercase()
-        return products.filter { it.active && it.stock > 0 }.map { it.toProduct() }.filter { product ->
+        return source.filter { it.active }.map { it.toProduct() }.filter { product ->
             val matchesCategory = when (category) {
                 "Todos", "" -> true
                 "Promociones" -> product.onPromotion
@@ -88,7 +91,17 @@ object MarketCatalog {
     fun activeCount(sellerId: String?): Int = scoped(sellerId).count { it.active }
 
     fun lowStockCount(sellerId: String?): Int =
-        scoped(sellerId).count { it.active && it.stock in 0..3 }
+        scoped(sellerId).count { it.active && it.stock <= LOW_STOCK_MAX }
+
+    /** Porcentaje de productos activos con más de [LOW_STOCK_MAX] unidades. */
+    fun stockLevelPercent(sellerId: String?): Int = stockLevelPercent(scoped(sellerId))
+
+    fun stockLevelPercent(products: List<ShopProduct>): Int {
+        val active = products.filter { it.active }
+        if (active.isEmpty()) return 0
+        val enough = active.count { it.stock > LOW_STOCK_MAX }
+        return enough * 100 / active.size
+    }
 
     private fun scoped(sellerId: String?): List<ShopProduct> =
         if (sellerId.isNullOrBlank()) products else products.filter { it.sellerId == sellerId }
